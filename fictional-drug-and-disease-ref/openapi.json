@@ -1,0 +1,3191 @@
+{
+  "openapi" : "3.1.0",
+  "info" : {
+    "title" : "架空医薬品・疾病 データ Mock Server API",
+    "description" : "FICTIONAL DATA - NOT FOR MEDICAL USE / 架空データ・医療判断には使用不可\n\nこれは架空の医薬品・疾患データを返すモックサーバーです。\n内容は実在の医薬品・疾患・治療法を表すものではなく、\n医療判断・診療・自己判断に使用してはなりません。\nThis server returns FICTIONAL drug and disease data.\nDO NOT use for medical decisions or clinical practice.\n\n架空医薬品・疾病 Mock Server は、Flutter/iOS/Androidアプリ開発用のシナリオベースモックサーバーです。\n\n## APIカテゴリ\n- **Drug**: 医薬品リファレンスAPI (架空データ)\n- **Disease**: 疾患リファレンスAPI (架空データ)\n- **Categories**: カテゴリメタデータAPI (架空データ)\n- **Admin**: Mock Server管理API（シナリオ切替・状態リセット）\n- **System**: ヘルスチェック等システムAPI\n\n## シナリオ切り替え方法\n\n### 1. X-Mock-Scenario ヘッダー（リクエスト単位）\n```bash\ncurl -H \"X-Mock-Scenario: empty\" http://localhost:8080/drugs\n```\n\n### 2. Admin API（サーバー全体のオーバーライド）\n```bash\n# シナリオ設定\ncurl -X POST http://localhost:8080/__admin/configs/drugList \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"state\": \"empty\"}'\n\n# 全状態リセット\ncurl -X POST http://localhost:8080/__admin/reset\n```\n\n### シナリオ解決の優先順位\n1. X-Mock-Scenario ヘッダー（最優先）\n2. Admin API override\n3. デフォルトシナリオ",
+    "version" : "1.0.0"
+  },
+  "externalDocs" : {
+    "url" : "/"
+  },
+  "servers" : [ ],
+  "tags" : [ {
+    "name" : "Drug",
+    "description" : "医薬品リファレンスAPI (架空データ)"
+  }, {
+    "name" : "Disease",
+    "description" : "疾患リファレンスAPI (架空データ)"
+  }, {
+    "name" : "Categories",
+    "description" : "カテゴリメタデータAPI (架空データ)"
+  }, {
+    "name" : "Admin",
+    "description" : "Mock Server管理API（シナリオ切替・状態リセット）"
+  }, {
+    "name" : "System",
+    "description" : "ヘルスチェック等システムAPI"
+  } ],
+  "paths" : {
+    "/health" : {
+      "get" : {
+        "tags" : [ "System" ],
+        "summary" : "ヘルスチェック",
+        "description" : "サーバーの稼働状態を確認する。",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "サーバー稼働中",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/__admin/configs" : {
+      "get" : {
+        "tags" : [ "Admin" ],
+        "summary" : "全シナリオオーバーライド取得",
+        "description" : "現在設定されている全エンドポイントのシナリオオーバーライドを取得する。",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "エンドポイント名→シナリオオーバーライドのマップ",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/__admin/configs/{name}" : {
+      "post" : {
+        "tags" : [ "Admin" ],
+        "summary" : "シナリオオーバーライド設定",
+        "description" : "指定エンドポイントのシナリオオーバーライドを設定する。",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "path",
+          "description" : "エンドポイント名",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "シナリオオーバーライド設定",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioOverride"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "設定成功",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/__admin/transitions/{name}" : {
+      "post" : {
+        "tags" : [ "Admin" ],
+        "summary" : "遷移チェーン設定",
+        "description" : "指定エンドポイントの遷移チェーン（リクエストごとにシナリオが順次切り替わる設定）を設定する。",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "path",
+          "description" : "エンドポイント名",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "遷移チェーン設定（シナリオ名のリスト）",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.TransitionChainRequest"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "設定成功",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/__admin/transitions" : {
+      "get" : {
+        "tags" : [ "Admin" ],
+        "summary" : "遷移チェーン全取得",
+        "description" : "現在設定されている全遷移チェーンを取得する。",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "エンドポイント名→遷移チェーン情報のマップ",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      },
+      "post" : {
+        "tags" : [ "Admin" ],
+        "summary" : "遷移チェーン一括設定",
+        "description" : "複数エンドポイントの遷移チェーンを一括で設定する。",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "エンドポイント名→シナリオリストのマップ",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.BatchTransitionsRequest"
+              }
+            }
+          },
+          "required" : false
+        },
+        "responses" : {
+          "200" : {
+            "description" : "設定成功",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/__admin/reset" : {
+      "post" : {
+        "tags" : [ "Admin" ],
+        "summary" : "全状態リセット",
+        "description" : "全シナリオオーバーライド、遷移チェーン、フィールドオーバーライドをリセットする。",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "リセット成功",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/__admin/catalog" : {
+      "get" : {
+        "tags" : [ "Admin" ],
+        "summary" : "エンドポイントカタログ（HTML）",
+        "description" : "全エンドポイントの画面・シナリオ・Fixture対応表をHTMLで返す。",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "HTMLカタログページ",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/drugs/{id}" : {
+      "get" : {
+        "tags" : [ "Drug" ],
+        "summary" : "医薬品詳細を id で取得する",
+        "description" : "`id` で指定した医薬品詳細 Fixture を返す。",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "医薬品 ID (`drug_NNNN` 形式)",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "`id` で指定された Fixture",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug"
+                },
+                "examples" : {
+                  "default" : {
+                    "value" : {
+                      "id" : "drug_0000",
+                      "generic_name" : "エセルル",
+                      "brand_name" : "イルエイル",
+                      "brand_name_kana" : "イルエイル",
+                      "atc_code" : "A99ZZ00",
+                      "yj_code" : "999612426256",
+                      "therapeutic_category_name" : "消化器系および代謝",
+                      "regulatory_class" : [ "ordinary" ],
+                      "dosage_form" : "tablet",
+                      "route_of_administration" : "oral",
+                      "composition" : {
+                        "active_ingredient" : "エセルル",
+                        "active_ingredient_amount" : {
+                          "amount" : 10.0,
+                          "unit" : "microgram",
+                          "per" : null
+                        },
+                        "inactive_ingredients" : [ "フレエワ", "ロウメモイド", "メルトセ" ],
+                        "appearance" : "白色のフィルムコート錠 (PTP 包装)",
+                        "identification_code" : null
+                      },
+                      "warning" : [ {
+                        "order" : 1,
+                        "sub_order" : null,
+                        "content" : "重篤なアナフィラキシーがあらわれた場合には、直ちに投与を中止し適切な対応薬投与を行うこと。 (架空)"
+                      }, {
+                        "order" : 2,
+                        "sub_order" : null,
+                        "content" : "本剤により重篤な血小板減少が発現するおそれがあるため、投与開始前にCT 検査を実施すること。 (架空)"
+                      } ],
+                      "contraindications" : [ {
+                        "order" : 1,
+                        "sub_order" : null,
+                        "content" : "重篤な慢性腎臓病のある患者には投与しないこと(症状を悪化させるおそれがある)。 (架空)"
+                      }, {
+                        "order" : 2,
+                        "sub_order" : null,
+                        "content" : "本剤の成分に対し過敏症の既往歴のある患者には投与しないこと。 (架空)"
+                      } ],
+                      "indications" : [ {
+                        "order" : 1,
+                        "content" : "フレイブに起因する腹痛の緩和。 (架空)"
+                      }, {
+                        "order" : 2,
+                        "content" : "ヒソネナにおける各種症状の改善。 (架空)"
+                      } ],
+                      "indications_related_precautions" : [ {
+                        "order" : 1,
+                        "sub_order" : null,
+                        "content" : "グライラクの確定診断が行われた患者にのみ投与すること。 (架空)"
+                      } ],
+                      "dosage" : {
+                        "standard_dosage" : "通常、成人には**1 回 35 mg** を 1 日 1 回 回食後経口投与する。 (架空)",
+                        "age_specific_dosage" : [ {
+                          "range" : {
+                            "min_age_months" : 72,
+                            "max_age_months" : 144,
+                            "label" : "6 歳以上 12 歳未満"
+                          },
+                          "dose" : "学童では体重に応じて**1 回 13.4 mg/kg** を 1 日 2 回 回投与する。 (架空)"
+                        } ],
+                        "renal_adjustment" : [ {
+                          "range" : {
+                            "min_ml_per_min" : 90,
+                            "max_ml_per_min" : null,
+                            "severity" : "normal",
+                            "label" : "90 mL/min 以上、正常腎機能"
+                          },
+                          "dose" : "中等度腎機能障害 には原則投与を推奨しない。やむを得ず投与する場合は 心電図検査 を管理しながら慎重に投与する。 (架空)"
+                        } ],
+                        "hepatic_adjustment" : [ {
+                          "severity" : "mild",
+                          "dose" : "重度肝機能障害 では初回用量を通常量の 25 % に減量する。 (架空)"
+                        } ]
+                      },
+                      "dosage_related_precautions" : [ {
+                        "order" : 1,
+                        "sub_order" : null,
+                        "content" : "- CT 検査 の結果に応じて投与量を調整すること。 (架空)"
+                      }, {
+                        "order" : 2,
+                        "sub_order" : null,
+                        "content" : "- 肝機能検査 の結果に応じて投与量を調整すること。 (架空)"
+                      } ],
+                      "important_precautions" : [ {
+                        "order" : 1,
+                        "sub_order" : null,
+                        "content" : "- 自動車の運転等、危険を伴う機械の操作時は 口渇 の発現に注意するよう指導すること。 (架空)"
+                      } ],
+                      "precautions_for_specific_populations" : [ {
+                        "category" : "pediatric",
+                        "note" : "透析患者 では 肝機能障害 の発現頻度が高いとの報告があるため、慎重に投与する。 (架空)"
+                      } ],
+                      "interactions" : {
+                        "combination_prohibited" : [ {
+                          "drug_id" : null,
+                          "display_name" : "他の サンプル系薬",
+                          "clinical_symptom" : "併用開始後数日以内に 頭痛 が報告されている。 (架空)",
+                          "mechanism" : "胆汁排泄 を介した排泄競合により本剤の消失半減期が延長する可能性がある。 (架空)"
+                        } ],
+                        "combination_caution" : [ {
+                          "drug_id" : null,
+                          "display_name" : "サンプル系薬 系薬剤",
+                          "clinical_symptom" : "併用により 頭痛 が発現又は悪化するおそれがある。 (架空)",
+                          "mechanism" : "併用薬との蛋白結合置換により、本剤の遊離型分率が上昇し 血小板減少 を招くおそれがある。 (架空)"
+                        } ]
+                      },
+                      "adverse_reactions" : {
+                        "serious" : [ {
+                          "name" : "重篤な副作用 1",
+                          "frequency" : "under_1_percent",
+                          "symptom" : "投与開始後に 倦怠感 が発現することがある。 (架空)",
+                          "initial_signs" : "初期症状として 食欲不振、血糖値 の異常があらわれた場合は速やかに受診するよう指導すること。 (架空)",
+                          "countermeasure" : "症状発現時は投与を中止し、対応薬投与 を実施すること。 (架空)"
+                        }, {
+                          "name" : "重篤な副作用 2",
+                          "frequency" : "over_5_percent",
+                          "symptom" : "長期投与により 嘔気 及び CRP の変化が報告されている。 (架空)",
+                          "initial_signs" : "発現時の徴候として 口渇 及び ヘモグロビン値 の変動が報告されている。 (架空)",
+                          "countermeasure" : "重症例では サイアザイド系利尿薬 の投与と 腎機能検査 による経過観察を行うこと。 (架空)"
+                        } ],
+                        "other" : {
+                          "over5_percent" : [ "頭痛", "めまい" ],
+                          "between1_and5_percent" : [ "悪心", "下痢" ],
+                          "under1_percent" : [ "発疹" ],
+                          "frequency_unknown" : [ "倦怠感" ]
+                        }
+                      },
+                      "effects_on_lab_tests" : [ {
+                        "order" : 1,
+                        "sub_order" : null,
+                        "content" : "- ヘモグロビン値 の変動が報告されている。 (架空)"
+                      }, {
+                        "order" : 2,
+                        "sub_order" : null,
+                        "content" : "- HbA1c の変動が報告されている。 (架空)"
+                      } ],
+                      "overdose" : {
+                        "symptoms" : "過量摂取により クレアチニン値 の変動を伴う 動悸 が発現しうる。 (架空)",
+                        "management" : "過量投与の疑いがある場合は、胃洗浄等の 対応薬投与 を実施し、MRI 検査 でモニタリングする。 (架空)"
+                      },
+                      "administration_precautions" : [ {
+                        "order" : 1,
+                        "sub_order" : null,
+                        "content" : "- 投与部位の 発疹 が発現した場合は投与部位の変更を検討すること。 (架空)"
+                      } ],
+                      "other_precautions" : [ {
+                        "order" : 1,
+                        "sub_order" : null,
+                        "content" : "長期投与時の安全性は 52 週間 までの試験で確認されている。 (架空)"
+                      }, {
+                        "order" : 2,
+                        "sub_order" : null,
+                        "content" : "海外市販後において 低血糖 の報告があるため、投与中は 心電図検査 による観察を行うこと。 (架空)"
+                      } ],
+                      "pharmacokinetics" : {
+                        "blood_concentration" : "健康成人に 45 g を単回経口投与したとき、Cmax は 93.5 ng/mL、T1/2 は 18.0 時間 であった。 (架空)",
+                        "absorption" : "食事の影響により吸収量が 0.7 倍 変動するため、服用タイミングに注意する。 (架空)",
+                        "distribution" : "血漿蛋白結合率は**62 %**であり、CYP3A4 阻害薬 との置換に留意する。 (架空)",
+                        "metabolism" : "主として CYP2D6 により代謝され、主代謝物は ムンラララ である。 (架空)",
+                        "excretion" : "糞便中排泄率は 77.1 % であり、腎機能低下時は用量調節を考慮する。 (架空)",
+                        "parameters" : [ {
+                          "name" : "Cmax",
+                          "value" : "4.5 μg/mL"
+                        }, {
+                          "name" : "T1/2",
+                          "value" : "6.2 時間"
+                        }, {
+                          "name" : "AUC",
+                          "value" : "38.4 μg・時/mL"
+                        } ]
+                      },
+                      "clinical_results" : [ {
+                        "heading" : "有効性",
+                        "content" : "長期投与試験では 38 週間 週後の効果持続率は 99 % であった。 (架空)"
+                      }, {
+                        "heading" : "安全性",
+                        "content" : "ラメルクイ に対するプラセボ対照試験で、探索的評価項目 に関して有意な改善が認められた (p < 0.024)。 (架空)"
+                      } ],
+                      "pharmacology" : {
+                        "mechanism" : "本剤は 免疫応答経路 経路を抑制することで 血糖降下作用 を示すと考えられる。 (架空)",
+                        "effect" : "動物試験において、本剤は 疼痛モデル モデルで用量依存的に 抗不安作用 を示した。 (架空)"
+                      },
+                      "physicochemical_properties" : {
+                        "generic_name_english" : "Es'Erl",
+                        "molecular_formula" : "C20H25N3O",
+                        "molecular_weight" : null,
+                        "description" : "白色の結晶性粉末である。 (架空)"
+                      },
+                      "handling_precautions" : [ {
+                        "order" : 1,
+                        "sub_order" : null,
+                        "content" : "- 光により分解するため、遮光した状態で保存すること。 (架空)"
+                      } ],
+                      "approval_conditions" : [ {
+                        "order" : 1,
+                        "sub_order" : null,
+                        "content" : "本剤投与に際しては、適切な施設要件を満たす医療機関において 胸部 X 線 を管理下で行うこと。 (架空)"
+                      }, {
+                        "order" : 2,
+                        "sub_order" : null,
+                        "content" : "本剤の適正使用に関して医師等を対象とした 副作用対応研修 を実施し、適切な情報提供を行うこと。 (架空)"
+                      } ],
+                      "packages" : [ {
+                        "size" : "100 錠 (10 錠 × 10 PTP)",
+                        "storage_condition" : {
+                          "temperature" : "room_temperature",
+                          "light_protection" : false,
+                          "moisture_protection" : false,
+                          "additional_note" : null
+                        },
+                        "expiration_months" : 40
+                      } ],
+                      "references" : [ {
+                        "citation" : "架空文献 1. サンプル誌, 12, 345-348.",
+                        "source" : "サンプル誌"
+                      }, {
+                        "citation" : "架空文献 2. サンプル誌, 12, 345-348.",
+                        "source" : "サンプル誌"
+                      }, {
+                        "citation" : "架空文献 3. サンプル誌, 12, 345-348.",
+                        "source" : "サンプル誌"
+                      } ],
+                      "insurance_notes" : [ {
+                        "order" : 1,
+                        "sub_order" : null,
+                        "content" : "本剤の保険請求にあたっては、ジャマ の確定診断根拠を診療録に記載すること。 (架空)"
+                      } ],
+                      "manufacturer" : "ヴジセントイ製薬",
+                      "revised_at" : "2026-04-23",
+                      "related_disease_ids" : [ "disease_0052" ],
+                      "image_url" : "/v1/images/dosage-forms/tablet?size=Original",
+                      "disclaimer" : "FICTIONAL DATA - NOT FOR MEDICAL USE / 架空データ・医療判断には使用不可"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "指定 id が存在しない",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/drugs" : {
+      "get" : {
+        "tags" : [ "Drug" ],
+        "summary" : "医薬品一覧を取得する",
+        "description" : "起動時に生成された医薬品 Fixture 一覧を envelope 形式で返す。X-Mock-Scenario ヘッダで `default` (120 件) / `empty` (0 件) を切り替え可能。 `page` (1-origin) / `page_size` (既定 20, 上限 100) でページング可能。\n\n## 利用可能シナリオ\nX-Mock-Scenario ヘッダーまたは Admin API で切り替え可能:\n- `default`\n- `empty`\n\nデフォルト: `default`",
+        "parameters" : [ {
+          "name" : "X-Mock-Scenario",
+          "in" : "header",
+          "description" : "シナリオ名を指定（Admin APIオーバーライドより優先）",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "1-origin のページ番号 (既定 1)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          }
+        }, {
+          "name" : "page_size",
+          "in" : "query",
+          "description" : "1 ページの件数 (既定 20, 上限 100)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          }
+        }, {
+          "name" : "category_atc",
+          "in" : "query",
+          "description" : "ATC コードの先頭文字 (例: `A`)。指定時は前方一致で絞り込み",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "regulatory_class",
+          "in" : "query",
+          "description" : "規制区分の `@SerialName` 値 (例: `prescription_required`)。指定時は `regulatory_class` リストに含まれるものに絞り込み",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "route",
+          "in" : "query",
+          "description" : "投与経路の `@SerialName` 値 (例: `oral`)。指定時は `route_of_administration` が一致するものに絞り込み",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "dosage_form",
+          "in" : "query",
+          "description" : "剤形の `@SerialName` 値 (例: `tablet`)。指定時は `dosage_form` が一致するものに絞り込み",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "therapeutic_category",
+          "in" : "query",
+          "description" : "薬効カテゴリ (`TherapeuticCategory` の enum 名 (例: `ALIMENTARY_METABOLISM` / `NERVOUS_SYSTEM`))。未知の値は HTTP 400 + `ErrorResponse(code=\"INVALID_THERAPEUTIC_CATEGORY\")` を返す。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "keyword",
+          "in" : "query",
+          "description" : "検索キーワード。半角空白区切りで複数指定すると AND 結合 (各トークンが対象フィールド集合のいずれかに OR で一致する必要)。空または未指定時は絞り込みを行わない。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "keyword_match",
+          "in" : "query",
+          "description" : "キーワード一致モード。`partial` (既定) で部分一致、`prefix` で前方一致。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "keyword_target",
+          "in" : "query",
+          "description" : "キーワード検索対象。`generic` (一般名) / `brand` (販売名 + 販売名カナ) / `both` (既定。両方)。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "ソート順。`-revised_at` (既定。改訂日降順) / `brand_name_kana` (販売名カナ昇順) / `atc_code` (ATC コード昇順) / `therapeutic_category_name` (薬効カテゴリ名昇順)。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "adverse_reaction_keyword",
+          "in" : "query",
+          "description" : "副作用キーワード (部分一致)。`adverseReactions.serious[].name` および `adverseReactions.other.*` の全副作用名テキストを対象に絞り込む。空または未指定時は絞り込みを行わない。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "precaution_category",
+          "in" : "query",
+          "description" : "特定背景患者カテゴリ (`PrecautionPopulationCategory` の enum 名 (例: `PREGNANT` / `GERIATRIC`))。複数指定時 (`?precaution_category=A&precaution_category=B`) は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 400 + `ErrorResponse(code=\"INVALID_PRECAUTION_CATEGORY\")` を返す。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "シナリオに応じたレスポンス",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugListResponse"
+                },
+                "examples" : {
+                  "default" : {
+                    "value" : {
+                      "items" : [ {
+                        "id" : "drug_0080",
+                        "brand_name" : "トレデキム",
+                        "generic_name" : "トレデキム",
+                        "therapeutic_category_name" : "対魔女兵器 (架空分類)",
+                        "regulatory_class" : [ "poison", "prescription_required" ],
+                        "dosage_form" : "liquid",
+                        "brand_name_kana" : "トレデキム",
+                        "atc_code" : "L99ZZ80",
+                        "revised_at" : "2026-05-01",
+                        "image_url" : "/v1/images/drugs/drug_0080?size=Original"
+                      }, {
+                        "id" : "drug_0090",
+                        "brand_name" : "ライショウネクエ",
+                        "generic_name" : "ヨグレ",
+                        "therapeutic_category_name" : "神経系",
+                        "regulatory_class" : [ "psychotropic_2", "prescription_required" ],
+                        "dosage_form" : "tablet",
+                        "brand_name_kana" : "ライショウネクエ",
+                        "atc_code" : "N99ZZ90",
+                        "revised_at" : "2026-04-23",
+                        "image_url" : "/v1/images/dosage-forms/tablet?size=Original"
+                      }, {
+                        "id" : "drug_0000",
+                        "brand_name" : "イルエイル",
+                        "generic_name" : "エセルル",
+                        "therapeutic_category_name" : "消化器系および代謝",
+                        "regulatory_class" : [ "ordinary" ],
+                        "dosage_form" : "tablet",
+                        "brand_name_kana" : "イルエイル",
+                        "atc_code" : "A99ZZ00",
+                        "revised_at" : "2026-04-23",
+                        "image_url" : "/v1/images/dosage-forms/tablet?size=Original"
+                      }, {
+                        "id" : "drug_0091",
+                        "brand_name" : "イエヴィルケル",
+                        "generic_name" : "リイトクオル",
+                        "therapeutic_category_name" : "神経系",
+                        "regulatory_class" : [ "psychotropic_3", "prescription_required" ],
+                        "dosage_form" : "capsule",
+                        "brand_name_kana" : "イエヴィルケル",
+                        "atc_code" : "N99ZZ91",
+                        "revised_at" : "2026-04-22",
+                        "image_url" : "/v1/images/dosage-forms/capsule?size=Original"
+                      }, {
+                        "id" : "drug_0001",
+                        "brand_name" : "ライザ",
+                        "generic_name" : "シャリブレ",
+                        "therapeutic_category_name" : "消化器系および代謝",
+                        "regulatory_class" : [ "ordinary" ],
+                        "dosage_form" : "capsule",
+                        "brand_name_kana" : "ライザ",
+                        "atc_code" : "A99ZZ01",
+                        "revised_at" : "2026-04-22",
+                        "image_url" : "/v1/images/dosage-forms/capsule?size=Original"
+                      }, {
+                        "id" : "drug_0092",
+                        "brand_name" : "デスルトンレ",
+                        "generic_name" : "ワチロオク",
+                        "therapeutic_category_name" : "神経系",
+                        "regulatory_class" : [ "narcotic", "prescription_required" ],
+                        "dosage_form" : "granule",
+                        "brand_name_kana" : "デスルトンレ",
+                        "atc_code" : "N99ZZ92",
+                        "revised_at" : "2026-04-21",
+                        "image_url" : "/v1/images/dosage-forms/granule?size=Original"
+                      }, {
+                        "id" : "drug_0002",
+                        "brand_name" : "リングムクプ",
+                        "generic_name" : "ルモンワス",
+                        "therapeutic_category_name" : "消化器系および代謝",
+                        "regulatory_class" : [ "ordinary" ],
+                        "dosage_form" : "granule",
+                        "brand_name_kana" : "リングムクプ",
+                        "atc_code" : "A99ZZ02",
+                        "revised_at" : "2026-04-21",
+                        "image_url" : "/v1/images/dosage-forms/granule?size=Original"
+                      }, {
+                        "id" : "drug_0093",
+                        "brand_name" : "ドンイカアナサエル",
+                        "generic_name" : "エイトクズ",
+                        "therapeutic_category_name" : "神経系",
+                        "regulatory_class" : [ "psychotropic_1", "prescription_required" ],
+                        "dosage_form" : "liquid",
+                        "brand_name_kana" : "ドンイカアナサエル",
+                        "atc_code" : "N99ZZ93",
+                        "revised_at" : "2026-04-20",
+                        "image_url" : "/v1/images/dosage-forms/liquid?size=Original"
+                      }, {
+                        "id" : "drug_0003",
+                        "brand_name" : "デスドウブグ",
+                        "generic_name" : "タドノイル",
+                        "therapeutic_category_name" : "消化器系および代謝",
+                        "regulatory_class" : [ "ordinary" ],
+                        "dosage_form" : "powder",
+                        "brand_name_kana" : "デスドウブグ",
+                        "atc_code" : "A99ZZ03",
+                        "revised_at" : "2026-04-20",
+                        "image_url" : "/v1/images/dosage-forms/powder?size=Original"
+                      }, {
+                        "id" : "drug_0094",
+                        "brand_name" : "シエイト",
+                        "generic_name" : "ペルトアイン",
+                        "therapeutic_category_name" : "神経系",
+                        "regulatory_class" : [ "psychotropic_2", "prescription_required" ],
+                        "dosage_form" : "patch",
+                        "brand_name_kana" : "シエイト",
+                        "atc_code" : "N99ZZ94",
+                        "revised_at" : "2026-04-19",
+                        "image_url" : "/v1/images/dosage-forms/patch?size=Original"
+                      }, {
+                        "id" : "drug_0004",
+                        "brand_name" : "テイラウセ",
+                        "generic_name" : "フレイボル",
+                        "therapeutic_category_name" : "消化器系および代謝",
+                        "regulatory_class" : [ "ordinary" ],
+                        "dosage_form" : "liquid",
+                        "brand_name_kana" : "テイラウセ",
+                        "atc_code" : "A99ZZ04",
+                        "revised_at" : "2026-04-19",
+                        "image_url" : "/v1/images/dosage-forms/liquid?size=Original"
+                      }, {
+                        "id" : "drug_0095",
+                        "brand_name" : "ヤペル",
+                        "generic_name" : "ルモンビ",
+                        "therapeutic_category_name" : "神経系",
+                        "regulatory_class" : [ "psychotropic_3", "prescription_required" ],
+                        "dosage_form" : "tablet",
+                        "brand_name_kana" : "ヤペル",
+                        "atc_code" : "N99ZZ95",
+                        "revised_at" : "2026-04-18",
+                        "image_url" : "/v1/images/dosage-forms/tablet?size=Original"
+                      }, {
+                        "id" : "drug_0005",
+                        "brand_name" : "ルクラン",
+                        "generic_name" : "ルモンクオンフ",
+                        "therapeutic_category_name" : "消化器系および代謝",
+                        "regulatory_class" : [ "ordinary" ],
+                        "dosage_form" : "tablet",
+                        "brand_name_kana" : "ルクラン",
+                        "atc_code" : "A99ZZ05",
+                        "revised_at" : "2026-04-18",
+                        "image_url" : "/v1/images/dosage-forms/tablet?size=Original"
+                      }, {
+                        "id" : "drug_0096",
+                        "brand_name" : "トイムミト",
+                        "generic_name" : "シャクサ",
+                        "therapeutic_category_name" : "神経系",
+                        "regulatory_class" : [ "narcotic", "prescription_required" ],
+                        "dosage_form" : "capsule",
+                        "brand_name_kana" : "トイムミト",
+                        "atc_code" : "N99ZZ96",
+                        "revised_at" : "2026-04-17",
+                        "image_url" : "/v1/images/dosage-forms/capsule?size=Original"
+                      }, {
+                        "id" : "drug_0006",
+                        "brand_name" : "クレアランド",
+                        "generic_name" : "トクラエイ",
+                        "therapeutic_category_name" : "消化器系および代謝",
+                        "regulatory_class" : [ "ordinary" ],
+                        "dosage_form" : "capsule",
+                        "brand_name_kana" : "クレアランド",
+                        "atc_code" : "A99ZZ06",
+                        "revised_at" : "2026-04-17",
+                        "image_url" : "/v1/images/dosage-forms/capsule?size=Original"
+                      }, {
+                        "id" : "drug_0097",
+                        "brand_name" : "イエヴィルク",
+                        "generic_name" : "ファヨン",
+                        "therapeutic_category_name" : "神経系",
+                        "regulatory_class" : [ "psychotropic_1", "prescription_required" ],
+                        "dosage_form" : "granule",
+                        "brand_name_kana" : "イエヴィルク",
+                        "atc_code" : "N99ZZ97",
+                        "revised_at" : "2026-04-16",
+                        "image_url" : "/v1/images/dosage-forms/granule?size=Original"
+                      }, {
+                        "id" : "drug_0007",
+                        "brand_name" : "テイゲ",
+                        "generic_name" : "ムンレイ",
+                        "therapeutic_category_name" : "消化器系および代謝",
+                        "regulatory_class" : [ "ordinary" ],
+                        "dosage_form" : "granule",
+                        "brand_name_kana" : "テイゲ",
+                        "atc_code" : "A99ZZ07",
+                        "revised_at" : "2026-04-16",
+                        "image_url" : "/v1/images/dosage-forms/granule?size=Original"
+                      }, {
+                        "id" : "drug_0098",
+                        "brand_name" : "ライリエ",
+                        "generic_name" : "ウルルセント",
+                        "therapeutic_category_name" : "神経系",
+                        "regulatory_class" : [ "psychotropic_2", "prescription_required" ],
+                        "dosage_form" : "liquid",
+                        "brand_name_kana" : "ライリエ",
+                        "atc_code" : "N99ZZ98",
+                        "revised_at" : "2026-04-15",
+                        "image_url" : "/v1/images/dosage-forms/liquid?size=Original"
+                      }, {
+                        "id" : "drug_0008",
+                        "brand_name" : "テイアルルイエ",
+                        "generic_name" : "グライグイ",
+                        "therapeutic_category_name" : "消化器系および代謝",
+                        "regulatory_class" : [ "ordinary" ],
+                        "dosage_form" : "powder",
+                        "brand_name_kana" : "テイアルルイエ",
+                        "atc_code" : "A99ZZ08",
+                        "revised_at" : "2026-04-15",
+                        "image_url" : "/v1/images/dosage-forms/powder?size=Original"
+                      }, {
+                        "id" : "drug_0099",
+                        "brand_name" : "シルク",
+                        "generic_name" : "エスンド",
+                        "therapeutic_category_name" : "神経系",
+                        "regulatory_class" : [ "psychotropic_3", "prescription_required" ],
+                        "dosage_form" : "patch",
+                        "brand_name_kana" : "シルク",
+                        "atc_code" : "N99ZZ99",
+                        "revised_at" : "2026-04-14",
+                        "image_url" : "/v1/images/dosage-forms/patch?size=Original"
+                      } ],
+                      "page" : 1,
+                      "page_size" : 20,
+                      "total_pages" : 6,
+                      "total_count" : 120,
+                      "disclaimer" : "FICTIONAL DATA - NOT FOR MEDICAL USE / 架空データ・医療判断には使用不可"
+                    }
+                  },
+                  "empty" : {
+                    "value" : {
+                      "items" : [ ],
+                      "page" : 1,
+                      "page_size" : 20,
+                      "total_pages" : 0,
+                      "total_count" : 0,
+                      "disclaimer" : "FICTIONAL DATA - NOT FOR MEDICAL USE / 架空データ・医療判断には使用不可"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/diseases/{id}" : {
+      "get" : {
+        "tags" : [ "Disease" ],
+        "summary" : "疾患詳細を id で取得する",
+        "description" : "`id` で指定した疾患詳細 Fixture を返す。 Admin API `POST /__admin/configs/diseaseDetail` で delayMs / statusCode / headers をオーバーライド可能。",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "疾患 ID (`disease_NNNN` 形式)",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "`id` で指定された Fixture",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease"
+                },
+                "examples" : {
+                  "default" : {
+                    "value" : {
+                      "id" : "disease_0000",
+                      "name" : "ヒソネナ",
+                      "name_kana" : "ヒソネナ",
+                      "name_english" : "hison'Ena",
+                      "icd10_chapter" : "chapter_i",
+                      "medical_department" : [ "infectious_disease", "emergency" ],
+                      "chronicity" : "acute",
+                      "infectious" : true,
+                      "synonyms" : [ "ディヴィリル", "フレイデ" ],
+                      "summary" : "ヒソネナは、慢性的な経過を特徴とする亜急性疾患である。中高年に好発し、近年診断技術の進歩により早期発見例が増加している。 (架空)",
+                      "epidemiology" : {
+                        "prevalence" : {
+                          "rate" : 21.0,
+                          "denominator" : 100000,
+                          "unit" : "per_population",
+                          "label" : "人口 100000 対 21 (架空)"
+                        },
+                        "onset_age_range" : {
+                          "min_age_years" : 42,
+                          "max_age_years" : 52,
+                          "label" : "42-52 代"
+                        },
+                        "sex_ratio" : {
+                          "male_ratio" : 3,
+                          "female_ratio" : 1,
+                          "note" : "架空比率"
+                        },
+                        "risk_factors" : [ "長時間の接触", "肥満", "媒介生物への曝露" ]
+                      },
+                      "etiology" : "ヒソネナは特発性疾患に分類される疾患群で、持続性の疼痛を主訴に受診する例が多い。確定診断には**画像検査 (CT)** を用いる。 (架空)",
+                      "symptoms" : {
+                        "main_symptoms" : [ "食欲不振", "疼痛", "息切れ" ],
+                        "associated_symptoms" : [ "悪心", "浮腫" ],
+                        "onset_pattern" : "relapsing"
+                      },
+                      "diagnostic_criteria" : {
+                        "required" : [ "画像検査 (MRI) による所見と肝腫大 の組み合わせで判定する。除外診断として代謝性疾患を除外することが必要。 (架空)", "下記の項目を総合して判定する。架空疾患のため数値は参考値である。\n- 必須項目: 病理組織学的異常\n- 補助項目: 遺伝子検査陽性\n(架空)" ],
+                        "supporting" : [ "下記の項目を総合して判定する。架空疾患のため数値は参考値である。\n- 必須項目: 典型的臨床症状\n- 補助項目: バイオマーカーの軽度上昇\n(架空)", "遺伝子検査 による所見と発熱所見 の組み合わせで判定する。除外診断として悪性腫瘍を除外することが必要。 (架空)" ],
+                        "notes" : "本基準は架空値であり、実臨床の診断には使用しない。**特異的血液検査異常** を満たし、かつ2 項目以上を充足する場合に確定診断とする。 (架空)"
+                      },
+                      "required_exams" : [ {
+                        "name" : "血液生化学検査",
+                        "category" : "blood_test",
+                        "typical_finding" : "典型所見 1 (架空)",
+                        "reference_range" : "基準値 1 (架空)"
+                      }, {
+                        "name" : "問診票",
+                        "category" : "pathology",
+                        "typical_finding" : "典型所見 2 (架空)",
+                        "reference_range" : "基準値 2 (架空)"
+                      }, {
+                        "name" : "CT検査",
+                        "category" : "imaging",
+                        "typical_finding" : "典型所見 3 (架空)",
+                        "reference_range" : "基準値 3 (架空)"
+                      } ],
+                      "severity_grading" : null,
+                      "differential_diagnoses" : [ "リイタン", "アームクス" ],
+                      "complications" : [ "タンクエイ", "イルロギ" ],
+                      "treatments" : {
+                        "pharmacological" : [ {
+                          "drug_category" : "架空薬効群 1",
+                          "drug_ids" : [ ],
+                          "indication" : "標準治療は外科的治療を中心とし、症状に応じて理学療法を併用する。治療開始から16 週間 後に効果判定を行う。 (架空)",
+                          "notes" : "急性期には輸液・電解質補正を実施し、安定期へ移行後は長期抗菌療法による維持療法を継続する。 (架空)"
+                        }, {
+                          "drug_category" : "架空薬効群 2",
+                          "drug_ids" : [ ],
+                          "indication" : "急性期には抗菌薬投与を実施し、安定期へ移行後は対症療法による維持療法を継続する。 (架空)",
+                          "notes" : "急性期には免疫グロブリン大量療法を実施し、安定期へ移行後は生物学的製剤による維持療法を継続する。 (架空)"
+                        } ],
+                        "non_pharmacological" : [ {
+                          "heading" : "食事療法",
+                          "items" : [ "項目 1", "項目 2" ],
+                          "description" : "放射線療法 を第一選択とする。効果不十分例では生物学的製剤を追加し、改善が乏しい場合は地域基幹病院へ紹介する。 (架空)"
+                        } ],
+                        "acute_phase_protocol" : [ {
+                          "order" : 1,
+                          "action" : "支持療法 を第一選択とする。効果不十分例では血漿交換を追加し、改善が乏しい場合は該当専門科へ紹介する。 (架空)",
+                          "target" : "目標値 1 (架空)"
+                        } ]
+                      },
+                      "prognosis" : "早期発見により予後は良好である。診断 5 年後の機能保持率 は**約 94.0%** と報告される (架空)。",
+                      "prevention" : [ "定期健診の受診" ],
+                      "related_drug_ids" : [ "drug_0020", "drug_0114" ],
+                      "related_disease_ids" : [ "disease_0046", "disease_0048" ],
+                      "revised_at" : "2026-04-23",
+                      "disclaimer" : "FICTIONAL DATA - NOT FOR MEDICAL USE / 架空データ・医療判断には使用不可"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "指定 id が存在しない",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/diseases" : {
+      "get" : {
+        "tags" : [ "Disease" ],
+        "summary" : "疾患一覧を取得する",
+        "description" : "起動時に生成された疾患 Fixture 一覧を envelope 形式で返す。X-Mock-Scenario ヘッダで `default` (80 件) / `empty` (0 件) を切り替え可能。 `page` (1-origin) / `page_size` (既定 20, 上限 100) でページング可能。\n\n## 利用可能シナリオ\nX-Mock-Scenario ヘッダーまたは Admin API で切り替え可能:\n- `default`\n- `empty`\n\nデフォルト: `default`",
+        "parameters" : [ {
+          "name" : "X-Mock-Scenario",
+          "in" : "header",
+          "description" : "シナリオ名を指定（Admin APIオーバーライドより優先）",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "1-origin のページ番号 (既定 1)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          }
+        }, {
+          "name" : "page_size",
+          "in" : "query",
+          "description" : "1 ページの件数 (既定 20, 上限 100)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          }
+        }, {
+          "name" : "icd10_chapter",
+          "in" : "query",
+          "description" : "ICD-10 章コードの `@SerialName` 値 (例: `chapter_i`)。指定時は `icd10_chapter` が一致するものに絞り込み",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "department",
+          "in" : "query",
+          "description" : "診療科の `@SerialName` 値 (例: `internal_medicine`)。指定時は `medical_department` リストに含まれるものに絞り込み",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "chronicity",
+          "in" : "query",
+          "description" : "慢性度の `@SerialName` 値 (例: `chronic`)。指定時は `chronicity` が一致するものに絞り込み",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "infectious",
+          "in" : "query",
+          "description" : "感染性の有無 (`true` / `false`)。指定時は `infectious` が一致するものに絞り込み",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "keyword",
+          "in" : "query",
+          "description" : "検索キーワード。空白区切りで複数語を渡すと AND 結合 (各語が `keyword_target` の対象フィールドのいずれかにヒットすればよい)。未指定 / 空文字 / 空白のみは絞り込みなし。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "keyword_match",
+          "in" : "query",
+          "description" : "一致モード `partial` (既定) / `prefix` (lower-case 厳密)。未指定 / 空文字 / 不正値は既定値 `partial` にフォールバック。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "keyword_target",
+          "in" : "query",
+          "description" : "検索対象 `name` (既定、`name` + `name_kana`) / `name_english` / `synonyms` (lower-case 厳密)。未指定 / 空文字 / 不正値は既定値 `name` にフォールバック。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "並び替えキー。未指定は `-revised_at` (改訂日降順)、`name_kana` (読み仮名昇順) / `icd10_chapter` (ICD-10 章昇順) を許容。未対応キーは 400 BadRequest。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "symptom_keyword",
+          "in" : "query",
+          "description" : "主症状キーワード (部分一致)。`symptoms.mainSymptoms[]` を対象に絞り込む。空または未指定時は絞り込みを行わない。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "onset_pattern",
+          "in" : "query",
+          "description" : "発症パターン (`OnsetPattern` の enum 名、例: `ACUTE`)。複数指定時は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 400 + `ErrorResponse(code=\"INVALID_ONSET_PATTERN\")` を返す。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "exam_category",
+          "in" : "query",
+          "description" : "検査カテゴリ (`ExamCategory` の enum 名、例: `IMAGING`)。複数指定時は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 400 + `ErrorResponse(code=\"INVALID_EXAM_CATEGORY\")` を返す。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "has_pharmacological_treatment",
+          "in" : "query",
+          "description" : "薬物治療の有無 (`true` / `false`)。指定時は `treatments.pharmacological` の空/非空で絞り込む。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "has_severity_grading",
+          "in" : "query",
+          "description" : "重症度分類の有無 (`true` / `false`)。指定時は `severityGrading` の null / non-null で絞り込む。",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "シナリオに応じたレスポンス",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse"
+                },
+                "examples" : {
+                  "default" : {
+                    "value" : {
+                      "items" : [ {
+                        "id" : "disease_0000",
+                        "name" : "ヒソネナ",
+                        "icd10_chapter" : "chapter_i",
+                        "medical_department" : [ "infectious_disease", "emergency" ],
+                        "chronicity" : "acute",
+                        "infectious" : true,
+                        "name_kana" : "ヒソネナ",
+                        "revised_at" : "2026-04-23"
+                      }, {
+                        "id" : "disease_0001",
+                        "name" : "ラメルクイ",
+                        "icd10_chapter" : "chapter_i",
+                        "medical_department" : [ "infectious_disease", "cardiology" ],
+                        "chronicity" : "acute",
+                        "infectious" : true,
+                        "name_kana" : "ラメルクイ",
+                        "revised_at" : "2026-04-22"
+                      }, {
+                        "id" : "disease_0002",
+                        "name" : "ルチクラルイ",
+                        "icd10_chapter" : "chapter_i",
+                        "medical_department" : [ "infectious_disease", "dermatology" ],
+                        "chronicity" : "acute",
+                        "infectious" : true,
+                        "name_kana" : "ルチクラルイ",
+                        "revised_at" : "2026-04-21"
+                      }, {
+                        "id" : "disease_0003",
+                        "name" : "エイフチ",
+                        "icd10_chapter" : "chapter_i",
+                        "medical_department" : [ "infectious_disease", "urology" ],
+                        "chronicity" : "acute",
+                        "infectious" : true,
+                        "name_kana" : "エイフチ",
+                        "revised_at" : "2026-04-20"
+                      }, {
+                        "id" : "disease_0004",
+                        "name" : "ルチゼルン",
+                        "icd10_chapter" : "chapter_i",
+                        "medical_department" : [ "infectious_disease", "otolaryngology" ],
+                        "chronicity" : "acute",
+                        "infectious" : true,
+                        "name_kana" : "ルチゼルン",
+                        "revised_at" : "2026-04-19"
+                      }, {
+                        "id" : "disease_0005",
+                        "name" : "エイデンヴァニ",
+                        "icd10_chapter" : "chapter_i",
+                        "medical_department" : [ "infectious_disease", "pediatrics" ],
+                        "chronicity" : "acute",
+                        "infectious" : true,
+                        "name_kana" : "エイデンヴァニ",
+                        "revised_at" : "2026-04-18"
+                      }, {
+                        "id" : "disease_0006",
+                        "name" : "ルイショウェンクエ",
+                        "icd10_chapter" : "chapter_ii",
+                        "medical_department" : [ "internal_medicine", "neurology" ],
+                        "chronicity" : "chronic",
+                        "infectious" : false,
+                        "name_kana" : "ルイショウェンクエ",
+                        "revised_at" : "2026-04-17"
+                      }, {
+                        "id" : "disease_0007",
+                        "name" : "ルイロジ",
+                        "icd10_chapter" : "chapter_ii",
+                        "medical_department" : [ "internal_medicine", "orthopedics" ],
+                        "chronicity" : "chronic",
+                        "infectious" : false,
+                        "name_kana" : "ルイロジ",
+                        "revised_at" : "2026-04-16"
+                      }, {
+                        "id" : "disease_0008",
+                        "name" : "ルモンドウンイ",
+                        "icd10_chapter" : "chapter_ii",
+                        "medical_department" : [ "internal_medicine", "surgery" ],
+                        "chronicity" : "chronic",
+                        "infectious" : false,
+                        "name_kana" : "ルモンドウンイ",
+                        "revised_at" : "2026-04-15"
+                      }, {
+                        "id" : "disease_0009",
+                        "name" : "フレイセ",
+                        "icd10_chapter" : "chapter_ii",
+                        "medical_department" : [ "internal_medicine", "ophthalmology" ],
+                        "chronicity" : "chronic",
+                        "infectious" : false,
+                        "name_kana" : "フレイセ",
+                        "revised_at" : "2026-04-14"
+                      }, {
+                        "id" : "disease_0010",
+                        "name" : "フレイブ",
+                        "icd10_chapter" : "chapter_ii",
+                        "medical_department" : [ "internal_medicine", "orthopedics" ],
+                        "chronicity" : "chronic",
+                        "infectious" : false,
+                        "name_kana" : "フレイブ",
+                        "revised_at" : "2026-04-13"
+                      }, {
+                        "id" : "disease_0011",
+                        "name" : "タリパド",
+                        "icd10_chapter" : "chapter_ii",
+                        "medical_department" : [ "internal_medicine", "neurology" ],
+                        "chronicity" : "chronic",
+                        "infectious" : false,
+                        "name_kana" : "タリパド",
+                        "revised_at" : "2026-04-12"
+                      }, {
+                        "id" : "disease_0012",
+                        "name" : "フレイクオ",
+                        "icd10_chapter" : "chapter_iii",
+                        "medical_department" : [ "internal_medicine", "pediatrics" ],
+                        "chronicity" : "subacute",
+                        "infectious" : false,
+                        "name_kana" : "フレイクオ",
+                        "revised_at" : "2026-04-11"
+                      }, {
+                        "id" : "disease_0013",
+                        "name" : "ラトレンチャ",
+                        "icd10_chapter" : "chapter_iii",
+                        "medical_department" : [ "internal_medicine", "otolaryngology" ],
+                        "chronicity" : "subacute",
+                        "infectious" : false,
+                        "name_kana" : "ラトレンチャ",
+                        "revised_at" : "2026-04-10"
+                      }, {
+                        "id" : "disease_0014",
+                        "name" : "クトゥル",
+                        "icd10_chapter" : "chapter_iii",
+                        "medical_department" : [ "internal_medicine", "urology" ],
+                        "chronicity" : "subacute",
+                        "infectious" : false,
+                        "name_kana" : "クトゥル",
+                        "revised_at" : "2026-04-09"
+                      }, {
+                        "id" : "disease_0015",
+                        "name" : "ルモンラン",
+                        "icd10_chapter" : "chapter_iv",
+                        "medical_department" : [ "endocrinology", "dermatology" ],
+                        "chronicity" : "chronic",
+                        "infectious" : false,
+                        "name_kana" : "ルモンラン",
+                        "revised_at" : "2026-04-08"
+                      }, {
+                        "id" : "disease_0016",
+                        "name" : "テラットオ",
+                        "icd10_chapter" : "chapter_iv",
+                        "medical_department" : [ "endocrinology", "cardiology" ],
+                        "chronicity" : "chronic",
+                        "infectious" : false,
+                        "name_kana" : "テラットオ",
+                        "revised_at" : "2026-04-07"
+                      }, {
+                        "id" : "disease_0017",
+                        "name" : "ヒソンスアク",
+                        "icd10_chapter" : "chapter_iv",
+                        "medical_department" : [ "endocrinology", "emergency" ],
+                        "chronicity" : "chronic",
+                        "infectious" : false,
+                        "name_kana" : "ヒソンスアク",
+                        "revised_at" : "2026-04-06"
+                      }, {
+                        "id" : "disease_0018",
+                        "name" : "シャユ",
+                        "icd10_chapter" : "chapter_iv",
+                        "medical_department" : [ "endocrinology", "infectious_disease" ],
+                        "chronicity" : "chronic",
+                        "infectious" : false,
+                        "name_kana" : "シャユ",
+                        "revised_at" : "2026-04-05"
+                      }, {
+                        "id" : "disease_0019",
+                        "name" : "モンクエル",
+                        "icd10_chapter" : "chapter_iv",
+                        "medical_department" : [ "endocrinology", "gynecology" ],
+                        "chronicity" : "chronic",
+                        "infectious" : false,
+                        "name_kana" : "モンクエル",
+                        "revised_at" : "2026-04-04"
+                      } ],
+                      "page" : 1,
+                      "page_size" : 20,
+                      "total_pages" : 4,
+                      "total_count" : 80,
+                      "disclaimer" : "FICTIONAL DATA - NOT FOR MEDICAL USE / 架空データ・医療判断には使用不可"
+                    }
+                  },
+                  "empty" : {
+                    "value" : {
+                      "items" : [ ],
+                      "page" : 1,
+                      "page_size" : 20,
+                      "total_pages" : 0,
+                      "total_count" : 0,
+                      "disclaimer" : "FICTIONAL DATA - NOT FOR MEDICAL USE / 架空データ・医療判断には使用不可"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/categories" : {
+      "get" : {
+        "tags" : [ "Categories" ],
+        "summary" : "全カテゴリメタデータを取得する",
+        "description" : "ATC / 薬効カテゴリ / 投与経路 / 剤形 / 規制区分 / ICD-10 章 / 診療科の 7 カテゴリを集約",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "7 カテゴリのメタデータ",
+            "headers" : { },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.CategoriesResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/images/dosage-forms/{form}" : {
+      "get" : {
+        "tags" : [ "Drug" ],
+        "summary" : "剤形画像を取得する",
+        "description" : "13 種類の剤形 (capsule/cream/eye_drops/granule/inhaler/injection_form/liquid/nasal_spray/ointment/patch/powder/suppository/tablet) の PNG 画像を返す。?size=S|M|Original でリサイズ対応",
+        "parameters" : [ {
+          "name" : "form",
+          "in" : "path",
+          "description" : "剤形名 (例: tablet, capsule)",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "S|M|Original (省略時 Original)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "指定 form の PNG 画像",
+            "headers" : { },
+            "content" : {
+              "image/png" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "integer",
+                    "maximum" : 127,
+                    "minimum" : -128,
+                    "title" : "Byte"
+                  },
+                  "title" : "ByteArray<Byte>"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "指定 form の画像が存在しない",
+            "headers" : { }
+          },
+          "400" : {
+            "description" : "size に S/M/Original 以外を指定",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/v1/images/drugs/{drugId}" : {
+      "get" : {
+        "tags" : [ "Drug" ],
+        "summary" : "医薬品画像を取得する",
+        "description" : "drug_0080 と drug_0089 の 2 件のみ実在。それ以外は 404 で返却し、フロント側で剤形画像にフォールバックする運用",
+        "parameters" : [ {
+          "name" : "drugId",
+          "in" : "path",
+          "description" : "医薬品 ID (例: drug_0080, drug_0089)",
+          "required" : true,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "S|M|Original (省略時 Original)",
+          "required" : false,
+          "deprecated" : false,
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "指定 drugId の PNG 画像",
+            "headers" : { },
+            "content" : {
+              "image/png" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "integer",
+                    "maximum" : 127,
+                    "minimum" : -128,
+                    "title" : "Byte"
+                  },
+                  "title" : "ByteArray<Byte>"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "指定 drugId の画像が存在しない",
+            "headers" : { }
+          },
+          "400" : {
+            "description" : "size に S/M/Original 以外を指定",
+            "headers" : { }
+          }
+        },
+        "deprecated" : false
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.scenario.ScenarioOverride" : {
+        "type" : "object",
+        "properties" : {
+          "state" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "delay_ms" : {
+            "type" : [ "null", "integer" ],
+            "format" : "int64",
+            "title" : "Long"
+          },
+          "status_code" : {
+            "type" : [ "null", "integer" ],
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "headers" : {
+            "type" : [ "null", "object" ],
+            "additionalProperties" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "LinkedHashMap<String,String>"
+          }
+        },
+        "required" : [ "delay_ms", "headers", "state", "status_code" ],
+        "title" : "ScenarioOverride"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.TransitionChainRequest" : {
+        "type" : "object",
+        "properties" : {
+          "scenarios" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          }
+        },
+        "required" : [ "scenarios" ],
+        "title" : "TransitionChainRequest"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.BatchTransitionsRequest" : {
+        "type" : "object",
+        "properties" : {
+          "transitions" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string",
+                "title" : "String"
+              },
+              "title" : "ArrayList<String>"
+            },
+            "title" : "LinkedHashMap<String,ArrayList<String>>"
+          }
+        },
+        "required" : [ "transitions" ],
+        "title" : "BatchTransitionsRequest"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass" : {
+        "type" : "string",
+        "enum" : [ "poison", "potent", "ordinary", "psychotropic_1", "psychotropic_2", "psychotropic_3", "narcotic", "stimulant_precursor", "biological", "specified_biological", "prescription_required" ],
+        "title" : "RegulatoryClass"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm" : {
+        "type" : "string",
+        "enum" : [ "tablet", "capsule", "powder", "granule", "liquid", "injection_form", "ointment", "cream", "patch", "eye_drops", "suppository", "inhaler", "nasal_spray" ],
+        "title" : "DosageForm"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration" : {
+        "type" : "string",
+        "enum" : [ "oral", "topical", "injection_route", "inhalation", "rectal", "ophthalmic", "nasal", "transdermal" ],
+        "title" : "RouteOfAdministration"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.CompositionInfo" : {
+        "type" : "object",
+        "properties" : {
+          "active_ingredient" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "active_ingredient_amount" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.Dose"
+          },
+          "inactive_ingredients" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "appearance" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "identification_code" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          }
+        },
+        "required" : [ "active_ingredient", "active_ingredient_amount", "appearance", "identification_code", "inactive_ingredients" ],
+        "title" : "CompositionInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.Dose" : {
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "type" : "number",
+            "format" : "double",
+            "title" : "Double"
+          },
+          "unit" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit"
+          },
+          "per" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          }
+        },
+        "required" : [ "amount", "per", "unit" ],
+        "title" : "Dose"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DoseUnit" : {
+        "type" : "string",
+        "enum" : [ "mg", "g", "microgram", "ml", "l", "iu", "meq", "mol", "mmol", "percent" ],
+        "title" : "DoseUnit"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph" : {
+        "type" : "object",
+        "properties" : {
+          "order" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "sub_order" : {
+            "type" : [ "null", "integer" ],
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "content" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "content", "order", "sub_order" ],
+        "title" : "NumberedParagraph"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.IndicationItem" : {
+        "type" : "object",
+        "properties" : {
+          "order" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "content" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "content", "order" ],
+        "title" : "IndicationItem"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.DosageInfo" : {
+        "type" : "object",
+        "properties" : {
+          "standard_dosage" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "age_specific_dosage" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AgeDosage"
+            },
+            "title" : "ArrayList<AgeDosage>"
+          },
+          "renal_adjustment" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.RenalDose"
+            },
+            "title" : "ArrayList<RenalDose>"
+          },
+          "hepatic_adjustment" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.HepaticDose"
+            },
+            "title" : "ArrayList<HepaticDose>"
+          }
+        },
+        "required" : [ "age_specific_dosage", "hepatic_adjustment", "renal_adjustment", "standard_dosage" ],
+        "title" : "DosageInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AgeDosage" : {
+        "type" : "object",
+        "properties" : {
+          "range" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AgeRange"
+          },
+          "dose" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "dose", "range" ],
+        "title" : "AgeDosage"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AgeRange" : {
+        "type" : "object",
+        "properties" : {
+          "min_age_months" : {
+            "type" : [ "null", "integer" ],
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "max_age_months" : {
+            "type" : [ "null", "integer" ],
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "label" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "label", "max_age_months", "min_age_months" ],
+        "title" : "AgeRange"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.RenalDose" : {
+        "type" : "object",
+        "properties" : {
+          "range" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.CrClRange"
+          },
+          "dose" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "dose", "range" ],
+        "title" : "RenalDose"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.CrClRange" : {
+        "type" : "object",
+        "properties" : {
+          "min_ml_per_min" : {
+            "type" : [ "null", "integer" ],
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "max_ml_per_min" : {
+            "type" : [ "null", "integer" ],
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "severity" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RenalSeverity"
+          },
+          "label" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "label", "max_ml_per_min", "min_ml_per_min", "severity" ],
+        "title" : "CrClRange"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RenalSeverity" : {
+        "type" : "string",
+        "enum" : [ "normal", "mild", "moderate", "severe", "end_stage" ],
+        "title" : "RenalSeverity"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.HepaticDose" : {
+        "type" : "object",
+        "properties" : {
+          "severity" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.HepaticSeverity"
+          },
+          "dose" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "dose", "severity" ],
+        "title" : "HepaticDose"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.HepaticSeverity" : {
+        "type" : "string",
+        "enum" : [ "mild", "moderate", "severe" ],
+        "title" : "HepaticSeverity"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PrecautionPopulation" : {
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "category", "note" ],
+        "title" : "PrecautionPopulation"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.PrecautionPopulationCategory" : {
+        "type" : "string",
+        "enum" : [ "comorbidity", "renal_impairment", "hepatic_impairment", "reproductive_potential", "pregnant", "lactating", "pediatric", "geriatric" ],
+        "title" : "PrecautionPopulationCategory"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.InteractionInfo" : {
+        "type" : "object",
+        "properties" : {
+          "combination_prohibited" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.InteractionEntry"
+            },
+            "title" : "ArrayList<InteractionEntry>"
+          },
+          "combination_caution" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.InteractionEntry"
+            },
+            "title" : "ArrayList<InteractionEntry>"
+          }
+        },
+        "required" : [ "combination_caution", "combination_prohibited" ],
+        "title" : "InteractionInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.InteractionEntry" : {
+        "type" : "object",
+        "properties" : {
+          "drug_id" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          },
+          "display_name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "clinical_symptom" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "mechanism" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "clinical_symptom", "display_name", "drug_id", "mechanism" ],
+        "title" : "InteractionEntry"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReactionInfo" : {
+        "type" : "object",
+        "properties" : {
+          "serious" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReaction"
+            },
+            "title" : "ArrayList<AdverseReaction>"
+          },
+          "other" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReactionByFrequency"
+          }
+        },
+        "required" : [ "other", "serious" ],
+        "title" : "AdverseReactionInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReaction" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "frequency" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.FrequencyBand"
+          },
+          "symptom" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "initial_signs" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "countermeasure" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "countermeasure", "frequency", "initial_signs", "name", "symptom" ],
+        "title" : "AdverseReaction"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.FrequencyBand" : {
+        "type" : "string",
+        "enum" : [ "over_5_percent", "between_1_and_5_percent", "under_1_percent", "unknown" ],
+        "title" : "FrequencyBand"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReactionByFrequency" : {
+        "type" : "object",
+        "properties" : {
+          "over5_percent" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "between1_and5_percent" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "under1_percent" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "frequency_unknown" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          }
+        },
+        "required" : [ "between1_and5_percent", "frequency_unknown", "over5_percent", "under1_percent" ],
+        "title" : "AdverseReactionByFrequency"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.OverdoseInfo" : {
+        "type" : "object",
+        "properties" : {
+          "symptoms" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "management" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "management", "symptoms" ],
+        "title" : "OverdoseInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PharmacokineticsInfo" : {
+        "type" : "object",
+        "properties" : {
+          "blood_concentration" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          },
+          "absorption" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          },
+          "distribution" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          },
+          "metabolism" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          },
+          "excretion" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          },
+          "parameters" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PkParameter"
+            },
+            "title" : "ArrayList<PkParameter>"
+          }
+        },
+        "required" : [ "absorption", "blood_concentration", "distribution", "excretion", "metabolism", "parameters" ],
+        "title" : "PharmacokineticsInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PkParameter" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "value" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "name", "value" ],
+        "title" : "PkParameter"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.ClinicalResultSection" : {
+        "type" : "object",
+        "properties" : {
+          "heading" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "content" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "content", "heading" ],
+        "title" : "ClinicalResultSection"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PharmacologyInfo" : {
+        "type" : "object",
+        "properties" : {
+          "mechanism" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "effect" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "effect", "mechanism" ],
+        "title" : "PharmacologyInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PhysicochemicalInfo" : {
+        "type" : "object",
+        "properties" : {
+          "generic_name_english" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "molecular_formula" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "molecular_weight" : {
+            "type" : [ "null", "number" ],
+            "format" : "double",
+            "title" : "Double"
+          },
+          "description" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "description", "generic_name_english", "molecular_formula", "molecular_weight" ],
+        "title" : "PhysicochemicalInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PackageInfo" : {
+        "type" : "object",
+        "properties" : {
+          "size" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "storage_condition" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.StorageCondition"
+          },
+          "expiration_months" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          }
+        },
+        "required" : [ "expiration_months", "size", "storage_condition" ],
+        "title" : "PackageInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.StorageCondition" : {
+        "type" : "object",
+        "properties" : {
+          "temperature" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.StorageTemperature"
+          },
+          "light_protection" : {
+            "type" : "boolean",
+            "title" : "Boolean"
+          },
+          "moisture_protection" : {
+            "type" : "boolean",
+            "title" : "Boolean"
+          },
+          "additional_note" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          }
+        },
+        "required" : [ "additional_note", "light_protection", "moisture_protection", "temperature" ],
+        "title" : "StorageCondition"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.StorageTemperature" : {
+        "type" : "string",
+        "enum" : [ "room_temperature", "cold", "frozen" ],
+        "title" : "StorageTemperature"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.Reference" : {
+        "type" : "object",
+        "properties" : {
+          "citation" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "source" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          }
+        },
+        "required" : [ "citation", "source" ],
+        "title" : "Reference"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.Drug" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "generic_name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "brand_name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "brand_name_kana" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "atc_code" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "yj_code" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          },
+          "therapeutic_category_name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "regulatory_class" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass"
+            },
+            "title" : "ArrayList<RegulatoryClass>"
+          },
+          "dosage_form" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm"
+          },
+          "route_of_administration" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RouteOfAdministration"
+          },
+          "composition" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.CompositionInfo"
+          },
+          "warning" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph"
+            },
+            "title" : "ArrayList<NumberedParagraph>"
+          },
+          "contraindications" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph"
+            },
+            "title" : "ArrayList<NumberedParagraph>"
+          },
+          "indications" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.IndicationItem"
+            },
+            "title" : "ArrayList<IndicationItem>"
+          },
+          "indications_related_precautions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph"
+            },
+            "title" : "ArrayList<NumberedParagraph>"
+          },
+          "dosage" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.DosageInfo"
+          },
+          "dosage_related_precautions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph"
+            },
+            "title" : "ArrayList<NumberedParagraph>"
+          },
+          "important_precautions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph"
+            },
+            "title" : "ArrayList<NumberedParagraph>"
+          },
+          "precautions_for_specific_populations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PrecautionPopulation"
+            },
+            "title" : "ArrayList<PrecautionPopulation>"
+          },
+          "interactions" : {
+            "oneOf" : [ {
+              "type" : "null"
+            }, {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.InteractionInfo"
+            } ]
+          },
+          "adverse_reactions" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.AdverseReactionInfo"
+          },
+          "effects_on_lab_tests" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph"
+            },
+            "title" : "ArrayList<NumberedParagraph>"
+          },
+          "overdose" : {
+            "oneOf" : [ {
+              "type" : "null"
+            }, {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.OverdoseInfo"
+            } ]
+          },
+          "administration_precautions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph"
+            },
+            "title" : "ArrayList<NumberedParagraph>"
+          },
+          "other_precautions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph"
+            },
+            "title" : "ArrayList<NumberedParagraph>"
+          },
+          "pharmacokinetics" : {
+            "oneOf" : [ {
+              "type" : "null"
+            }, {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PharmacokineticsInfo"
+            } ]
+          },
+          "clinical_results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.ClinicalResultSection"
+            },
+            "title" : "ArrayList<ClinicalResultSection>"
+          },
+          "pharmacology" : {
+            "oneOf" : [ {
+              "type" : "null"
+            }, {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PharmacologyInfo"
+            } ]
+          },
+          "physicochemical_properties" : {
+            "oneOf" : [ {
+              "type" : "null"
+            }, {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PhysicochemicalInfo"
+            } ]
+          },
+          "handling_precautions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph"
+            },
+            "title" : "ArrayList<NumberedParagraph>"
+          },
+          "approval_conditions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph"
+            },
+            "title" : "ArrayList<NumberedParagraph>"
+          },
+          "packages" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.PackageInfo"
+            },
+            "title" : "ArrayList<PackageInfo>"
+          },
+          "references" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.Reference"
+            },
+            "title" : "ArrayList<Reference>"
+          },
+          "insurance_notes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.nested.NumberedParagraph"
+            },
+            "title" : "ArrayList<NumberedParagraph>"
+          },
+          "manufacturer" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "revised_at" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "related_disease_ids" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "image_url" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "disclaimer" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "administration_precautions", "adverse_reactions", "approval_conditions", "atc_code", "brand_name", "brand_name_kana", "clinical_results", "composition", "contraindications", "disclaimer", "dosage", "dosage_form", "dosage_related_precautions", "effects_on_lab_tests", "generic_name", "handling_precautions", "id", "image_url", "important_precautions", "indications", "indications_related_precautions", "insurance_notes", "interactions", "manufacturer", "other_precautions", "overdose", "packages", "pharmacokinetics", "pharmacology", "physicochemical_properties", "precautions_for_specific_populations", "references", "regulatory_class", "related_disease_ids", "revised_at", "route_of_administration", "therapeutic_category_name", "warning", "yj_code" ],
+        "title" : "Drug"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugSummary" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "brand_name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "generic_name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "therapeutic_category_name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "regulatory_class" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.RegulatoryClass"
+            },
+            "title" : "ArrayList<RegulatoryClass>"
+          },
+          "dosage_form" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.enums.DosageForm"
+          },
+          "brand_name_kana" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "atc_code" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "revised_at" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "image_url" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "atc_code", "brand_name", "brand_name_kana", "dosage_form", "generic_name", "id", "image_url", "regulatory_class", "revised_at", "therapeutic_category_name" ],
+        "title" : "DrugSummary"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugListResponse" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.drug.DrugSummary"
+            },
+            "title" : "ArrayList<DrugSummary>"
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "page_size" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "total_pages" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "total_count" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "disclaimer" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "disclaimer", "items", "page", "page_size", "total_count", "total_pages" ],
+        "title" : "DrugListResponse"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter" : {
+        "type" : "string",
+        "enum" : [ "chapter_i", "chapter_ii", "chapter_iii", "chapter_iv", "chapter_v", "chapter_vi", "chapter_vii", "chapter_viii", "chapter_ix", "chapter_x", "chapter_xi", "chapter_xii", "chapter_xiii", "chapter_xiv", "chapter_xv", "chapter_xvi", "chapter_xvii", "chapter_xviii", "chapter_xix", "chapter_xx", "chapter_xxi", "chapter_xxii" ],
+        "title" : "Icd10Chapter"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment" : {
+        "type" : "string",
+        "enum" : [ "internal_medicine", "cardiology", "gastroenterology", "endocrinology", "neurology", "psychiatry", "surgery", "orthopedics", "dermatology", "ophthalmology", "otolaryngology", "urology", "gynecology", "pediatrics", "emergency", "infectious_disease" ],
+        "title" : "MedicalDepartment"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity" : {
+        "type" : "string",
+        "enum" : [ "acute", "subacute", "chronic", "relapsing" ],
+        "title" : "Chronicity"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.EpidemiologyInfo" : {
+        "type" : "object",
+        "properties" : {
+          "prevalence" : {
+            "oneOf" : [ {
+              "type" : "null"
+            }, {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Prevalence"
+            } ]
+          },
+          "onset_age_range" : {
+            "oneOf" : [ {
+              "type" : "null"
+            }, {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.OnsetAgeRange"
+            } ]
+          },
+          "sex_ratio" : {
+            "oneOf" : [ {
+              "type" : "null"
+            }, {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SexDistribution"
+            } ]
+          },
+          "risk_factors" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          }
+        },
+        "required" : [ "onset_age_range", "prevalence", "risk_factors", "sex_ratio" ],
+        "title" : "EpidemiologyInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Prevalence" : {
+        "type" : "object",
+        "properties" : {
+          "rate" : {
+            "type" : [ "null", "number" ],
+            "format" : "double",
+            "title" : "Double"
+          },
+          "denominator" : {
+            "type" : [ "null", "integer" ],
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "unit" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.PrevalenceUnit"
+          },
+          "label" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "denominator", "label", "rate", "unit" ],
+        "title" : "Prevalence"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.PrevalenceUnit" : {
+        "type" : "string",
+        "enum" : [ "per_population", "per_patient", "per_birth" ],
+        "title" : "PrevalenceUnit"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.OnsetAgeRange" : {
+        "type" : "object",
+        "properties" : {
+          "min_age_years" : {
+            "type" : [ "null", "integer" ],
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "max_age_years" : {
+            "type" : [ "null", "integer" ],
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "label" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "label", "max_age_years", "min_age_years" ],
+        "title" : "OnsetAgeRange"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SexDistribution" : {
+        "type" : "object",
+        "properties" : {
+          "male_ratio" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "female_ratio" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "note" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          }
+        },
+        "required" : [ "female_ratio", "male_ratio", "note" ],
+        "title" : "SexDistribution"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo" : {
+        "type" : "object",
+        "properties" : {
+          "main_symptoms" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "associated_symptoms" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "onset_pattern" : {
+            "oneOf" : [ {
+              "type" : "null"
+            }, {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern"
+            } ]
+          }
+        },
+        "required" : [ "associated_symptoms", "main_symptoms", "onset_pattern" ],
+        "title" : "SymptomInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.OnsetPattern" : {
+        "type" : "string",
+        "enum" : [ "acute", "subacute", "chronic", "intermittent", "relapsing" ],
+        "title" : "OnsetPattern"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.DiagnosticCriteriaInfo" : {
+        "type" : "object",
+        "properties" : {
+          "required" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "supporting" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "notes" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          }
+        },
+        "required" : [ "notes", "required", "supporting" ],
+        "title" : "DiagnosticCriteriaInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Exam" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "category" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory"
+          },
+          "typical_finding" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "reference_range" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          }
+        },
+        "required" : [ "category", "name", "reference_range", "typical_finding" ],
+        "title" : "Exam"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.ExamCategory" : {
+        "type" : "string",
+        "enum" : [ "blood_test", "imaging", "physiological", "pathology", "interview" ],
+        "title" : "ExamCategory"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SeverityInfo" : {
+        "type" : "object",
+        "properties" : {
+          "grading_system" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "grades" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Grade"
+            },
+            "title" : "ArrayList<Grade>"
+          }
+        },
+        "required" : [ "grades", "grading_system" ],
+        "title" : "SeverityInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Grade" : {
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "criteria" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "recommended_action" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "criteria", "label", "recommended_action" ],
+        "title" : "Grade"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo" : {
+        "type" : "object",
+        "properties" : {
+          "pharmacological" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.PharmaTreatment"
+            },
+            "title" : "ArrayList<PharmaTreatment>"
+          },
+          "non_pharmacological" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentSection"
+            },
+            "title" : "ArrayList<TreatmentSection>"
+          },
+          "acute_phase_protocol" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.ProtocolStep"
+            },
+            "title" : "ArrayList<ProtocolStep>"
+          }
+        },
+        "required" : [ "acute_phase_protocol", "non_pharmacological", "pharmacological" ],
+        "title" : "TreatmentInfo"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.PharmaTreatment" : {
+        "type" : "object",
+        "properties" : {
+          "drug_category" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "drug_ids" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "indication" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "notes" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "drug_category", "drug_ids", "indication", "notes" ],
+        "title" : "PharmaTreatment"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentSection" : {
+        "type" : "object",
+        "properties" : {
+          "heading" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "description" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          }
+        },
+        "required" : [ "description", "heading", "items" ],
+        "title" : "TreatmentSection"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.ProtocolStep" : {
+        "type" : "object",
+        "properties" : {
+          "order" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "action" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "target" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          }
+        },
+        "required" : [ "action", "order", "target" ],
+        "title" : "ProtocolStep"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.Disease" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "name_kana" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "name_english" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          },
+          "icd10_chapter" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter"
+          },
+          "medical_department" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment"
+            },
+            "title" : "ArrayList<MedicalDepartment>"
+          },
+          "chronicity" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity"
+          },
+          "infectious" : {
+            "type" : "boolean",
+            "title" : "Boolean"
+          },
+          "synonyms" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "summary" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "epidemiology" : {
+            "oneOf" : [ {
+              "type" : "null"
+            }, {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.EpidemiologyInfo"
+            } ]
+          },
+          "etiology" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "symptoms" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SymptomInfo"
+          },
+          "diagnostic_criteria" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.DiagnosticCriteriaInfo"
+          },
+          "required_exams" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.Exam"
+            },
+            "title" : "ArrayList<Exam>"
+          },
+          "severity_grading" : {
+            "oneOf" : [ {
+              "type" : "null"
+            }, {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.SeverityInfo"
+            } ]
+          },
+          "differential_diagnoses" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "complications" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "treatments" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.nested.TreatmentInfo"
+          },
+          "prognosis" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          },
+          "prevention" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "related_drug_ids" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "related_disease_ids" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "revised_at" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "disclaimer" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "chronicity", "complications", "diagnostic_criteria", "differential_diagnoses", "disclaimer", "epidemiology", "etiology", "icd10_chapter", "id", "infectious", "medical_department", "name", "name_english", "name_kana", "prevention", "prognosis", "related_disease_ids", "related_drug_ids", "required_exams", "revised_at", "severity_grading", "summary", "symptoms", "synonyms", "treatments" ],
+        "title" : "Disease"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "name" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "icd10_chapter" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Icd10Chapter"
+          },
+          "medical_department" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.MedicalDepartment"
+            },
+            "title" : "ArrayList<MedicalDepartment>"
+          },
+          "chronicity" : {
+            "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.enums.Chronicity"
+          },
+          "infectious" : {
+            "type" : "boolean",
+            "title" : "Boolean"
+          },
+          "name_kana" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "revised_at" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "chronicity", "icd10_chapter", "id", "infectious", "medical_department", "name", "name_kana", "revised_at" ],
+        "title" : "DiseaseSummary"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseListResponse" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.disease.DiseaseSummary"
+            },
+            "title" : "ArrayList<DiseaseSummary>"
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "page_size" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "total_pages" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "total_count" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "disclaimer" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "disclaimer", "items", "page", "page_size", "total_count", "total_pages" ],
+        "title" : "DiseaseListResponse"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.AtcEntry" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "label" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "code", "label" ],
+        "title" : "AtcEntry"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.TherapeuticCategoryEntry" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "label" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "id", "label" ],
+        "title" : "TherapeuticCategoryEntry"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.Icd10ChapterEntry" : {
+        "type" : "object",
+        "properties" : {
+          "roman" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "code" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "label" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "code", "label", "roman" ],
+        "title" : "Icd10ChapterEntry"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.CategoriesResponse" : {
+        "type" : "object",
+        "properties" : {
+          "atc" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.AtcEntry"
+            },
+            "title" : "ArrayList<AtcEntry>"
+          },
+          "therapeutic_categories" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.TherapeuticCategoryEntry"
+            },
+            "title" : "ArrayList<TherapeuticCategoryEntry>"
+          },
+          "route_of_administration" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "dosage_form" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "regulatory_class" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          },
+          "icd10_chapters" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.Icd10ChapterEntry"
+            },
+            "title" : "ArrayList<Icd10ChapterEntry>"
+          },
+          "medical_departments" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "ArrayList<String>"
+          }
+        },
+        "required" : [ "atc", "dosage_form", "icd10_chapters", "medical_departments", "regulatory_class", "route_of_administration", "therapeutic_categories" ],
+        "title" : "CategoriesResponse"
+      }
+    },
+    "examples" : { }
+  },
+  "webhooks" : { }
+}
