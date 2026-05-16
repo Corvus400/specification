@@ -595,7 +595,7 @@
         }, {
           "name" : "keyword_target",
           "in" : "query",
-          "description" : "キーワード検索対象。`generic` (一般名) / `brand` (販売名 + 販売名カナ) / `both` (既定。両方)。",
+          "description" : "キーワード検索対象。`generic` (一般名) / `brand` (販売名 + 販売名カナ) / `both` (既定。両方) / `all` (一般名 + 販売名 + 販売名カナ + ATC コード + YJ コード)。",
           "required" : false,
           "deprecated" : false,
           "explode" : false,
@@ -1135,7 +1135,7 @@
         }, {
           "name" : "keyword_target",
           "in" : "query",
-          "description" : "検索対象 `name` (既定、`name` + `name_kana`) / `name_english` / `synonyms` (lower-case 厳密)。未指定 / 空文字 / 不正値は既定値 `name` にフォールバック。",
+          "description" : "検索対象 `name` (既定、`name` + `name_kana`) / `name_english` / `synonyms` / `all` (名称 + 英語名 + 別名 + 症状 + ICD-10 章コード・範囲) (lower-case 厳密)。未指定 / 空文字 / 不正値は既定値 `name` にフォールバック。",
           "required" : false,
           "deprecated" : false,
           "explode" : false,
