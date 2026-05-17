@@ -28,7 +28,6 @@ Some specifications in this repository describe FICTIONAL drug, disease, and cli
 - **仕様書を実装から分離** — アプリや関連サービスから参照する仕様・設計メモを独立管理
 - **アプリ単位で仕様を整理** — プロジェクトごとにディレクトリを分け、画面仕様、データモデル、API 契約、永続化スキーマを配置
 - **契約ファイルを同梱** — OpenAPI など、実装側が参照する machine-readable な契約も必要に応じて保管
-- **公開前 hygiene を重視** — ローカル絶対パス、個人情報、秘密情報、AI transcript 痕跡を監査する script と CI を用意
 - **ポートフォリオ向けの短い説明構成** — README は参照実装リポジトリと同じ流れで、初見でも役割が分かる構成に統一
 
 ---
@@ -53,13 +52,7 @@ Some specifications in this repository describe FICTIONAL drug, disease, and cli
 
 ## 開発
 
-このリポジトリは仕様書中心のため、アプリケーションの build step はありません。公開前のローカル確認は次を実行します。
-
-```bash
-scripts/public-readiness-check.sh
-gitleaks detect --source . --redact --no-banner
-git diff --check
-```
+このリポジトリは仕様書中心のため、アプリケーションの build step はありません。
 
 JSON を変更した場合は、対象ファイルを parser で確認してください。
 
@@ -76,15 +69,6 @@ python3 -m json.tool fictional-drug-and-disease-ref/openapi.json >/dev/null
 - 公開 Issue は repository hygiene report のみに限定し、秘密情報・個人情報・脆弱性詳細を投稿しない導線にしています。
 - GitHub Actions と workflow 依存の更新は selected actions と SHA pinning を維持したまま手動レビューで適用します。
 - セキュリティ報告は [SECURITY.md](./SECURITY.md) の手順に従ってください。
-
----
-
-## セキュリティ / 公開前確認
-
-- Git author / committer email は GitHub noreply に統一しています。
-- tracked tree、Git 履歴、GitHub Issue / Pull Request / コメントに対して、秘密情報・ローカル絶対パス・個人メールの混入を確認します。
-- README 用画像はリポジトリ内の `assets/readme/` に配置し、外部の一時 URL やローカルパスには依存しません。
-- 公開後は GitHub secret scanning / push protection / Dependabot security updates の有効化状態を確認します。
 
 ---
 
