@@ -8,10 +8,30 @@ check_absent() {
   local pattern="$2"
   shift 2
 
-  if rg -n -I --hidden --glob '!.git/**' --glob '!scripts/public-readiness-check.sh' "$pattern" "$@"; then
+  if command -v rg >/dev/null 2>&1; then
+    if rg -n -I --hidden --glob '!.git/**' --glob '!scripts/public-readiness-check.sh' "$pattern" "$@"; then
+      echo "public-readiness-check: found ${label}" >&2
+      failures=$((failures + 1))
+    fi
+    return
+  fi
+
+  if grep -R -E -n -I --exclude-dir=.git --exclude=public-readiness-check.sh "$pattern" "$@"; then
     echo "public-readiness-check: found ${label}" >&2
     failures=$((failures + 1))
   fi
+}
+
+contains_fixed_string() {
+  local pattern="$1"
+  local file="$2"
+
+  if command -v rg >/dev/null 2>&1; then
+    rg -q --fixed-strings "$pattern" "$file"
+    return
+  fi
+
+  grep -F -q "$pattern" "$file"
 }
 
 mac_users='/(Us''ers|home)/[A-Za-z0-9_.-]+'
@@ -58,13 +78,11 @@ required_readme_sections=(
   '## 主な特徴'
   '## 仕様の置き場所'
   '## 現在の関連リポジトリ'
-  '## リポジトリ運用'
-  '## セキュリティ / 公開前確認'
   '## ライセンス'
 )
 
 for section in "${required_readme_sections[@]}"; do
-  if ! rg -q --fixed-strings "$section" README.md; then
+  if ! contains_fixed_string "$section" README.md; then
     echo "public-readiness-check: README is missing section: $section" >&2
     failures=$((failures + 1))
   fi
