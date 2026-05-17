@@ -11,6 +11,8 @@
 [![License](https://img.shields.io/github/license/Corvus400/specification)](./LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-specification-555555)](./)
 
+ポートフォリオリポジトリのため外部 PR、一般的なサポート依頼、機能要望、通常のバグ報告は受け付けません。Issue は公開リポジトリ運用上の衛生報告のために限定的に有効化します。
+
 ---
 
 ## DISCLAIMER
@@ -64,6 +66,9 @@ python3 -m json.tool fictional-drug-and-disease-ref/openapi.json >/dev/null
 
 - 外部からの Pull Request はレビュー対象外です。
 - 一般的なサポート・機能要望・通常のバグ報告は GitHub Issues では受け付けていません。
+- 公開 Issue は repository hygiene report のみに限定し、秘密情報・個人情報・脆弱性詳細を投稿しない導線にしています。
+- GitHub Actions と workflow 依存の更新は selected actions と SHA pinning を維持したまま手動レビューで適用します。
+- セキュリティ報告は [SECURITY.md](./SECURITY.md) の手順に従ってください。
 
 ---
 
