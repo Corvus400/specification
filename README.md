@@ -48,6 +48,25 @@ Some specifications in this repository describe FICTIONAL drug, disease, and cli
 
 ---
 
+## 開発
+
+このリポジトリは仕様書中心のため、アプリケーションの build step はありません。
+
+JSON を変更した場合は、対象ファイルを parser で確認してください。
+
+```bash
+python3 -m json.tool fictional-drug-and-disease-ref/openapi.json >/dev/null
+```
+
+---
+
+## リポジトリ運用
+
+- 外部からの Pull Request はレビュー対象外です。
+- 一般的なサポート・機能要望・通常のバグ報告は GitHub Issues では受け付けていません。
+
+---
+
 ## ライセンス
 
 本プロジェクトは [MIT License](./LICENSE) で公開しています。
