@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability report
+    url: https://github.com/Corvus400/specification/security/advisories/new
+    about: Do not disclose vulnerabilities, secrets, tokens, local paths, or private personal information in public issues.

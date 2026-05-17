@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  classify-ci-trust:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    outputs:
+      trusted: ${{ steps.classify.outputs.trusted }}
+
+    steps:
+      - id: classify
+        name: Classify pull request trust
+        shell: bash
+        env:
+          ACTOR: ${{ github.event.pull_request.user.login }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          trusted="false"
+          case "$ACTOR" in
+            Corvus400|dependabot\[bot\]|renovate\[bot\])
+              if [ "$HEAD_REPOSITORY" = "$REPOSITORY" ]; then
+                trusted="true"
+              fi
+              ;;
+          esac
+
+          echo "trusted=$trusted" >> "$GITHUB_OUTPUT"
+          echo "trusted=$trusted"
+
+  docs-check:
+    needs: [classify-ci-trust]
+    if: needs.classify-ci-trust.outputs.trusted == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout pull-request branch
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Run public readiness checks
+        run: scripts/public-readiness-check.sh
+
+      - name: Validate JSON documents
+        run: |
+          set -euo pipefail
+          find fictional-drug-and-disease-ref -name '*.json' -print0 |
+            while IFS= read -r -d '' file; do
+              python3 -m json.tool "$file" >/dev/null
+            done
+
+      - name: Check whitespace
+        run: git diff --check
+
+  ci-gate:
+    needs: [classify-ci-trust, docs-check]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check required CI jobs
+        env:
+          CLASSIFY_RESULT: ${{ needs.classify-ci-trust.result }}
+          TRUSTED: ${{ needs.classify-ci-trust.outputs.trusted }}
+          DOCS_CHECK_RESULT: ${{ needs.docs-check.result }}
+        run: |
+          set -euo pipefail
+          if [ "$CLASSIFY_RESULT" != "success" ]; then
+            echo "::error::classify-ci-trust result is $CLASSIFY_RESULT"
+            exit 1
+          fi
+          if [ "$TRUSTED" != "true" ]; then
+            echo "::error::External pull requests are not accepted for this portfolio repository."
+            exit 1
+          fi
+          if [ "$DOCS_CHECK_RESULT" != "success" ]; then
+            echo "::error::docs-check result is $DOCS_CHECK_RESULT"
+            exit 1
+          fi
+          echo "All required CI jobs passed."
