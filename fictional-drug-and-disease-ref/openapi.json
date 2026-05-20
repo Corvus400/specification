@@ -532,10 +532,15 @@
           "description" : "規制区分の `@SerialName` 値 (例: `prescription_required`)。指定時は `regulatory_class` リストに含まれるものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "explode" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "StringArray"
           }
         }, {
           "name" : "route",
@@ -543,10 +548,15 @@
           "description" : "投与経路の `@SerialName` 値 (例: `oral`)。指定時は `route_of_administration` が一致するものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "explode" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "StringArray"
           }
         }, {
           "name" : "dosage_form",
@@ -554,10 +564,15 @@
           "description" : "剤形の `@SerialName` 値 (例: `tablet`)。指定時は `dosage_form` が一致するものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "explode" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "StringArray"
           }
         }, {
           "name" : "therapeutic_category",
@@ -631,10 +646,15 @@
           "description" : "特定背景患者カテゴリ (`PrecautionPopulationCategory` の enum 名 (例: `PREGNANT` / `GERIATRIC`))。複数指定時 (`?precaution_category=A&precaution_category=B`) は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 400 + `ErrorResponse(code=\"INVALID_PRECAUTION_CATEGORY\")` を返す。",
           "required" : false,
           "deprecated" : false,
-          "explode" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "StringArray"
           }
         } ],
         "responses" : {
@@ -1072,10 +1092,15 @@
           "description" : "ICD-10 章コードの `@SerialName` 値 (例: `chapter_i`)。指定時は `icd10_chapter` が一致するものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "explode" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "StringArray"
           }
         }, {
           "name" : "department",
@@ -1083,10 +1108,15 @@
           "description" : "診療科の `@SerialName` 値 (例: `internal_medicine`)。指定時は `medical_department` リストに含まれるものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "explode" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "StringArray"
           }
         }, {
           "name" : "chronicity",
@@ -1094,10 +1124,15 @@
           "description" : "慢性度の `@SerialName` 値 (例: `chronic`)。指定時は `chronicity` が一致するものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "explode" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "StringArray"
           }
         }, {
           "name" : "infectious",
@@ -1171,10 +1206,15 @@
           "description" : "発症パターン (`OnsetPattern` の enum 名、例: `ACUTE`)。複数指定時は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 400 + `ErrorResponse(code=\"INVALID_ONSET_PATTERN\")` を返す。",
           "required" : false,
           "deprecated" : false,
-          "explode" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "StringArray"
           }
         }, {
           "name" : "exam_category",
@@ -1182,10 +1222,15 @@
           "description" : "検査カテゴリ (`ExamCategory` の enum 名、例: `IMAGING`)。複数指定時は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 400 + `ErrorResponse(code=\"INVALID_EXAM_CATEGORY\")` を返す。",
           "required" : false,
           "deprecated" : false,
-          "explode" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string",
-            "title" : "String"
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "title" : "String"
+            },
+            "title" : "StringArray"
           }
         }, {
           "name" : "has_pharmacological_treatment",
