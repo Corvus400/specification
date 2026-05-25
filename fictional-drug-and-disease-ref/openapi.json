@@ -88,6 +88,17 @@
           "200" : {
             "description" : "設定成功",
             "headers" : { }
+          },
+          "422" : {
+            "description" : "リクエストが不正",
+            "headers" : { },
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ProblemDetails"
+                }
+              }
+            }
           }
         },
         "deprecated" : false
@@ -125,6 +136,17 @@
           "200" : {
             "description" : "設定成功",
             "headers" : { }
+          },
+          "422" : {
+            "description" : "リクエストが不正",
+            "headers" : { },
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ProblemDetails"
+                }
+              }
+            }
           }
         },
         "deprecated" : false
@@ -164,6 +186,17 @@
           "200" : {
             "description" : "設定成功",
             "headers" : { }
+          },
+          "422" : {
+            "description" : "リクエストが不正",
+            "headers" : { },
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ProblemDetails"
+                }
+              }
+            }
           }
         },
         "deprecated" : false
@@ -241,7 +274,7 @@
                       "composition" : {
                         "active_ingredient" : "エセルル",
                         "active_ingredient_amount" : {
-                          "amount" : 10.0,
+                          "amount" : 364.0,
                           "unit" : "microgram",
                           "per" : null
                         },
@@ -252,16 +285,16 @@
                       "warning" : [ {
                         "order" : 1,
                         "sub_order" : null,
-                        "content" : "重篤なアナフィラキシーがあらわれた場合には、直ちに投与を中止し適切な対応薬投与を行うこと。 (架空)"
+                        "content" : "重篤なイエヴィルメルルがあらわれた場合には、直ちに投与を中止し適切な対応薬投与を行うこと。 (架空)"
                       }, {
                         "order" : 2,
                         "sub_order" : null,
-                        "content" : "本剤により重篤な血小板減少が発現するおそれがあるため、投与開始前にCT 検査を実施すること。 (架空)"
+                        "content" : "本剤により重篤なシスレが発現するおそれがあるため、投与開始前にCT 検査を実施すること。 (架空)"
                       } ],
                       "contraindications" : [ {
                         "order" : 1,
                         "sub_order" : null,
-                        "content" : "重篤な慢性腎臓病のある患者には投与しないこと(症状を悪化させるおそれがある)。 (架空)"
+                        "content" : "重篤なクレアラオトのある患者には投与しないこと(症状を悪化させるおそれがある)。 (架空)"
                       }, {
                         "order" : 2,
                         "sub_order" : null,
@@ -269,10 +302,10 @@
                       } ],
                       "indications" : [ {
                         "order" : 1,
-                        "content" : "フレイブに起因する腹痛の緩和。 (架空)"
+                        "content" : "モンクエルに起因するトクオアの緩和。 (架空)"
                       }, {
                         "order" : 2,
-                        "content" : "ヒソネナにおける各種症状の改善。 (架空)"
+                        "content" : "モンクエルにおける各種症状の改善。 (架空)"
                       } ],
                       "indications_related_precautions" : [ {
                         "order" : 1,
@@ -280,14 +313,14 @@
                         "content" : "グライラクの確定診断が行われた患者にのみ投与すること。 (架空)"
                       } ],
                       "dosage" : {
-                        "standard_dosage" : "通常、成人には**1 回 35 mg** を 1 日 1 回 回食後経口投与する。 (架空)",
+                        "standard_dosage" : "通常、成人には**1 回 2 錠** を 1 日 2 回食後経口投与する。 (架空)",
                         "age_specific_dosage" : [ {
                           "range" : {
-                            "min_age_months" : 72,
-                            "max_age_months" : 144,
-                            "label" : "6 歳以上 12 歳未満"
+                            "min_age_months" : 24,
+                            "max_age_months" : 72,
+                            "label" : "2 歳以上 6 歳未満"
                           },
-                          "dose" : "学童では体重に応じて**1 回 13.4 mg/kg** を 1 日 2 回 回投与する。 (架空)"
+                          "dose" : "学童では症状に応じて**1 回 1 錠** を 1 日 2 回経口投与する。 (架空)"
                         } ],
                         "renal_adjustment" : [ {
                           "range" : {
@@ -296,11 +329,11 @@
                             "severity" : "normal",
                             "label" : "90 mL/min 以上、正常腎機能"
                           },
-                          "dose" : "中等度腎機能障害 には原則投与を推奨しない。やむを得ず投与する場合は 心電図検査 を管理しながら慎重に投与する。 (架空)"
+                          "dose" : "中等度腎機能障害 には原則投与を推奨しない。やむを得ず投与する場合は 3 錠 を 尿検査 で管理しながら慎重に投与する。 (架空)"
                         } ],
                         "hepatic_adjustment" : [ {
                           "severity" : "mild",
-                          "dose" : "重度肝機能障害 では初回用量を通常量の 25 % に減量する。 (架空)"
+                          "dose" : "重度肝機能障害 では初回用量を 1 錠 に減量する。 (架空)"
                         } ]
                       },
                       "dosage_related_precautions" : [ {
@@ -315,45 +348,45 @@
                       "important_precautions" : [ {
                         "order" : 1,
                         "sub_order" : null,
-                        "content" : "- 自動車の運転等、危険を伴う機械の操作時は 口渇 の発現に注意するよう指導すること。 (架空)"
+                        "content" : "- 自動車の運転等、危険を伴う機械の操作時は トクオア の発現に注意するよう指導すること。 (架空)"
                       } ],
                       "precautions_for_specific_populations" : [ {
                         "category" : "pediatric",
-                        "note" : "透析患者 では 肝機能障害 の発現頻度が高いとの報告があるため、慎重に投与する。 (架空)"
+                        "note" : "透析患者 では イエヴィルサイム の発現頻度が高いとの報告があるため、慎重に投与する。 (架空)"
                       } ],
                       "interactions" : {
                         "combination_prohibited" : [ {
                           "drug_id" : null,
-                          "display_name" : "他の サンプル系薬",
-                          "clinical_symptom" : "併用開始後数日以内に 頭痛 が報告されている。 (架空)",
+                          "display_name" : "他の リングケト",
+                          "clinical_symptom" : "併用開始後数日以内に ドンイアル が報告されている。 (架空)",
                           "mechanism" : "胆汁排泄 を介した排泄競合により本剤の消失半減期が延長する可能性がある。 (架空)"
                         } ],
                         "combination_caution" : [ {
                           "drug_id" : null,
-                          "display_name" : "サンプル系薬 系薬剤",
-                          "clinical_symptom" : "併用により 頭痛 が発現又は悪化するおそれがある。 (架空)",
-                          "mechanism" : "併用薬との蛋白結合置換により、本剤の遊離型分率が上昇し 血小板減少 を招くおそれがある。 (架空)"
+                          "display_name" : "ライスイケスモレ 系薬剤",
+                          "clinical_symptom" : "併用により ドンイスリケス が発現又は悪化するおそれがある。 (架空)",
+                          "mechanism" : "併用薬との蛋白結合置換により、本剤の遊離型分率が上昇し リングレル を招くおそれがある。 (架空)"
                         } ]
                       },
                       "adverse_reactions" : {
                         "serious" : [ {
-                          "name" : "重篤な副作用 1",
+                          "name" : "イエヴィルクズ",
                           "frequency" : "under_1_percent",
-                          "symptom" : "投与開始後に 倦怠感 が発現することがある。 (架空)",
-                          "initial_signs" : "初期症状として 食欲不振、血糖値 の異常があらわれた場合は速やかに受診するよう指導すること。 (架空)",
+                          "symptom" : "投与開始後に イルヘク が発現することがある。 (架空)",
+                          "initial_signs" : "初期症状として ライロウ、血糖値 の異常があらわれた場合は速やかに受診するよう指導すること。 (架空)",
                           "countermeasure" : "症状発現時は投与を中止し、対応薬投与 を実施すること。 (架空)"
                         }, {
-                          "name" : "重篤な副作用 2",
+                          "name" : "リングレル",
                           "frequency" : "over_5_percent",
-                          "symptom" : "長期投与により 嘔気 及び CRP の変化が報告されている。 (架空)",
-                          "initial_signs" : "発現時の徴候として 口渇 及び ヘモグロビン値 の変動が報告されている。 (架空)",
-                          "countermeasure" : "重症例では サイアザイド系利尿薬 の投与と 腎機能検査 による経過観察を行うこと。 (架空)"
+                          "symptom" : "長期投与により ダリング 及び CRP の変化が報告されている。 (架空)",
+                          "initial_signs" : "発現時の徴候として トクオア 及び ヘモグロビン値 の変動が報告されている。 (架空)",
+                          "countermeasure" : "重症例では シツァ の投与と 腎機能検査 による経過観察を行うこと。 (架空)"
                         } ],
                         "other" : {
-                          "over5_percent" : [ "頭痛", "めまい" ],
-                          "between1_and5_percent" : [ "悪心", "下痢" ],
-                          "under1_percent" : [ "発疹" ],
-                          "frequency_unknown" : [ "倦怠感" ]
+                          "over5_percent" : [ "イエヴィルクズ", "ライセン" ],
+                          "between1_and5_percent" : [ "イエヴィルクズ" ],
+                          "under1_percent" : [ "ルクライジュンドイク" ],
+                          "frequency_unknown" : [ "テイアロオム" ]
                         }
                       },
                       "effects_on_lab_tests" : [ {
@@ -366,13 +399,13 @@
                         "content" : "- HbA1c の変動が報告されている。 (架空)"
                       } ],
                       "overdose" : {
-                        "symptoms" : "過量摂取により クレアチニン値 の変動を伴う 動悸 が発現しうる。 (架空)",
+                        "symptoms" : "過量摂取により クレアチニン値 の変動を伴う デステル が発現しうる。 (架空)",
                         "management" : "過量投与の疑いがある場合は、胃洗浄等の 対応薬投与 を実施し、MRI 検査 でモニタリングする。 (架空)"
                       },
                       "administration_precautions" : [ {
                         "order" : 1,
                         "sub_order" : null,
-                        "content" : "- 投与部位の 発疹 が発現した場合は投与部位の変更を検討すること。 (架空)"
+                        "content" : "- 投与部位の ヤクウ が発現した場合は投与部位の変更を検討すること。 (架空)"
                       } ],
                       "other_precautions" : [ {
                         "order" : 1,
@@ -381,39 +414,39 @@
                       }, {
                         "order" : 2,
                         "sub_order" : null,
-                        "content" : "海外市販後において 低血糖 の報告があるため、投与中は 心電図検査 による観察を行うこと。 (架空)"
+                        "content" : "海外市販後において イエヴィルメルル の報告があるため、投与中は 心電図検査 による観察を行うこと。 (架空)"
                       } ],
                       "pharmacokinetics" : {
                         "blood_concentration" : "健康成人に 45 g を単回経口投与したとき、Cmax は 93.5 ng/mL、T1/2 は 18.0 時間 であった。 (架空)",
                         "absorption" : "食事の影響により吸収量が 0.7 倍 変動するため、服用タイミングに注意する。 (架空)",
-                        "distribution" : "血漿蛋白結合率は**62 %**であり、CYP3A4 阻害薬 との置換に留意する。 (架空)",
-                        "metabolism" : "主として CYP2D6 により代謝され、主代謝物は ムンラララ である。 (架空)",
+                        "distribution" : "血漿蛋白結合率は**62 %**であり、イルアウク との置換に留意する。 (架空)",
+                        "metabolism" : "主として セントメ により代謝され、主代謝物は ムンラララ である。 (架空)",
                         "excretion" : "糞便中排泄率は 77.1 % であり、腎機能低下時は用量調節を考慮する。 (架空)",
                         "parameters" : [ {
                           "name" : "Cmax",
-                          "value" : "4.5 μg/mL"
+                          "value" : "7.8 μg/mL"
                         }, {
                           "name" : "T1/2",
-                          "value" : "6.2 時間"
+                          "value" : "2.6 時間"
                         }, {
                           "name" : "AUC",
-                          "value" : "38.4 μg・時/mL"
+                          "value" : "31.1 μg・時/mL"
                         } ]
                       },
                       "clinical_results" : [ {
-                        "heading" : "有効性",
+                        "heading" : "投与継続性",
                         "content" : "長期投与試験では 38 週間 週後の効果持続率は 99 % であった。 (架空)"
                       }, {
                         "heading" : "安全性",
                         "content" : "ラメルクイ に対するプラセボ対照試験で、探索的評価項目 に関して有意な改善が認められた (p < 0.024)。 (架空)"
                       } ],
                       "pharmacology" : {
-                        "mechanism" : "本剤は 免疫応答経路 経路を抑制することで 血糖降下作用 を示すと考えられる。 (架空)",
-                        "effect" : "動物試験において、本剤は 疼痛モデル モデルで用量依存的に 抗不安作用 を示した。 (架空)"
+                        "mechanism" : "本剤は 免疫応答経路を抑制することで ジオケイ を示すと考えられる。 (架空)",
+                        "effect" : "動物試験において、本剤は 疼痛モデルで用量依存的に タンクエスレ を示した。 (架空)"
                       },
                       "physicochemical_properties" : {
                         "generic_name_english" : "Es'Erl",
-                        "molecular_formula" : "C20H25N3O",
+                        "molecular_formula" : "C18H29N4O3",
                         "molecular_weight" : null,
                         "description" : "白色の結晶性粉末である。 (架空)"
                       },
@@ -432,24 +465,24 @@
                         "content" : "本剤の適正使用に関して医師等を対象とした 副作用対応研修 を実施し、適切な情報提供を行うこと。 (架空)"
                       } ],
                       "packages" : [ {
-                        "size" : "100 錠 (10 錠 × 10 PTP)",
+                        "size" : "40 錠 (10 錠 × 4 PTP)",
                         "storage_condition" : {
                           "temperature" : "room_temperature",
                           "light_protection" : false,
-                          "moisture_protection" : false,
+                          "moisture_protection" : true,
                           "additional_note" : null
                         },
                         "expiration_months" : 40
                       } ],
                       "references" : [ {
-                        "citation" : "架空文献 1. サンプル誌, 12, 345-348.",
-                        "source" : "サンプル誌"
+                        "citation" : "オリベ. ノキシバ試験. トセウ, 12, 345-348. (架空)",
+                        "source" : "トセウ"
                       }, {
-                        "citation" : "架空文献 2. サンプル誌, 12, 345-348.",
-                        "source" : "サンプル誌"
+                        "citation" : "ハマギ. タヂカ報告. クレアラツ, 12, 345-348. (架空)",
+                        "source" : "クレアラツ"
                       }, {
-                        "citation" : "架空文献 3. サンプル誌, 12, 345-348.",
-                        "source" : "サンプル誌"
+                        "citation" : "シズリ. ヤヨイ比較. クレアラツ, 12, 345-348. (架空)",
+                        "source" : "クレアラツ"
                       } ],
                       "insurance_notes" : [ {
                         "order" : 1,
@@ -458,7 +491,7 @@
                       } ],
                       "manufacturer" : "ヴジセントイ製薬",
                       "revised_at" : "2026-04-23",
-                      "related_disease_ids" : [ "disease_0052" ],
+                      "related_disease_ids" : [ "disease_0019" ],
                       "image_url" : "/v1/images/dosage-forms/tablet?size=Original",
                       "disclaimer" : "FICTIONAL DATA - NOT FOR MEDICAL USE / 架空データ・医療判断には使用不可"
                     }
@@ -469,7 +502,14 @@
           },
           "404" : {
             "description" : "指定 id が存在しない",
-            "headers" : { }
+            "headers" : { },
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ProblemDetails"
+                }
+              }
+            }
           }
         },
         "deprecated" : false
@@ -532,15 +572,10 @@
           "description" : "規制区分の `@SerialName` 値 (例: `prescription_required`)。指定時は `regulatory_class` リストに含まれるものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "style" : "form",
-          "explode" : true,
+          "explode" : false,
           "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "StringArray"
+            "type" : "string",
+            "title" : "String"
           }
         }, {
           "name" : "route",
@@ -548,15 +583,10 @@
           "description" : "投与経路の `@SerialName` 値 (例: `oral`)。指定時は `route_of_administration` が一致するものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "style" : "form",
-          "explode" : true,
+          "explode" : false,
           "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "StringArray"
+            "type" : "string",
+            "title" : "String"
           }
         }, {
           "name" : "dosage_form",
@@ -564,20 +594,15 @@
           "description" : "剤形の `@SerialName` 値 (例: `tablet`)。指定時は `dosage_form` が一致するものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "style" : "form",
-          "explode" : true,
+          "explode" : false,
           "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "StringArray"
+            "type" : "string",
+            "title" : "String"
           }
         }, {
           "name" : "therapeutic_category",
           "in" : "query",
-          "description" : "薬効カテゴリ (`TherapeuticCategory` の enum 名 (例: `ALIMENTARY_METABOLISM` / `NERVOUS_SYSTEM`))。未知の値は HTTP 400 + `ErrorResponse(code=\"INVALID_THERAPEUTIC_CATEGORY\")` を返す。",
+          "description" : "薬効カテゴリ (`TherapeuticCategory` の enum 名 (例: `ALIMENTARY_METABOLISM` / `NERVOUS_SYSTEM`))。未知の値は HTTP 422 + problem+json (`errors[].field=therapeutic_category`) を返す。",
           "required" : false,
           "deprecated" : false,
           "explode" : false,
@@ -643,18 +668,13 @@
         }, {
           "name" : "precaution_category",
           "in" : "query",
-          "description" : "特定背景患者カテゴリ (`PrecautionPopulationCategory` の enum 名 (例: `PREGNANT` / `GERIATRIC`))。複数指定時 (`?precaution_category=A&precaution_category=B`) は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 400 + `ErrorResponse(code=\"INVALID_PRECAUTION_CATEGORY\")` を返す。",
+          "description" : "特定背景患者カテゴリ (`PrecautionPopulationCategory` の enum 名 (例: `PREGNANT` / `GERIATRIC`))。複数指定時 (`?precaution_category=A&precaution_category=B`) は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 422 + problem+json (`errors[].field=precaution_category`) を返す。",
           "required" : false,
           "deprecated" : false,
-          "style" : "form",
-          "explode" : true,
+          "explode" : false,
           "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "StringArray"
+            "type" : "string",
+            "title" : "String"
           }
         } ],
         "responses" : {
@@ -952,84 +972,83 @@
                       "medical_department" : [ "infectious_disease", "emergency" ],
                       "chronicity" : "acute",
                       "infectious" : true,
-                      "synonyms" : [ "ディヴィリル", "フレイデ" ],
-                      "summary" : "ヒソネナは、慢性的な経過を特徴とする亜急性疾患である。中高年に好発し、近年診断技術の進歩により早期発見例が増加している。 (架空)",
+                      "synonyms" : [ "ディヴィリル", "フレイデ", "リイトプライ" ],
+                      "summary" : "ヒソネナは、免疫応答の急性変化を特徴とする再燃性疾患である。高齢者に好発し、近年診断技術の進歩により早期発見例が増加している。 (架空)",
                       "epidemiology" : {
                         "prevalence" : {
-                          "rate" : 21.0,
+                          "rate" : 9.0,
                           "denominator" : 100000,
                           "unit" : "per_population",
-                          "label" : "人口 100000 対 21 (架空)"
+                          "label" : "人口 100000 対 9 (架空)"
                         },
                         "onset_age_range" : {
-                          "min_age_years" : 42,
-                          "max_age_years" : 52,
-                          "label" : "42-52 代"
+                          "min_age_years" : 32,
+                          "max_age_years" : 49,
+                          "label" : "32-49 代"
                         },
                         "sex_ratio" : {
                           "male_ratio" : 3,
                           "female_ratio" : 1,
                           "note" : "架空比率"
                         },
-                        "risk_factors" : [ "長時間の接触", "肥満", "媒介生物への曝露" ]
+                        "risk_factors" : [ "経口感染への曝露", "経口感染への曝露", "感染者との濃厚接触" ]
                       },
-                      "etiology" : "ヒソネナは特発性疾患に分類される疾患群で、持続性の疼痛を主訴に受診する例が多い。確定診断には**画像検査 (CT)** を用いる。 (架空)",
+                      "etiology" : "ヒソネナは病原体関連疾患に分類される疾患群で、ルクフィシャを主訴に受診する例が多い。確定診断には**感染症評価パネル** を用いる。 (架空)",
                       "symptoms" : {
                         "main_symptoms" : [ "食欲不振", "疼痛", "息切れ" ],
                         "associated_symptoms" : [ "悪心", "浮腫" ],
                         "onset_pattern" : "relapsing"
                       },
                       "diagnostic_criteria" : {
-                        "required" : [ "画像検査 (MRI) による所見と肝腫大 の組み合わせで判定する。除外診断として代謝性疾患を除外することが必要。 (架空)", "下記の項目を総合して判定する。架空疾患のため数値は参考値である。\n- 必須項目: 病理組織学的異常\n- 補助項目: 遺伝子検査陽性\n(架空)" ],
-                        "supporting" : [ "下記の項目を総合して判定する。架空疾患のため数値は参考値である。\n- 必須項目: 典型的臨床症状\n- 補助項目: バイオマーカーの軽度上昇\n(架空)", "遺伝子検査 による所見と発熱所見 の組み合わせで判定する。除外診断として悪性腫瘍を除外することが必要。 (架空)" ],
-                        "notes" : "本基準は架空値であり、実臨床の診断には使用しない。**特異的血液検査異常** を満たし、かつ2 項目以上を充足する場合に確定診断とする。 (架空)"
+                        "required" : [ "炎症反応検査 による所見と発熱炎症所見 の組み合わせで判定する。除外診断として感染症に類似する別疾患を除外することが必要。 (架空)", "下記の項目を総合して判定する。架空疾患のため数値は参考値である。\n- 必須項目: 病原体検査の主要異常\n- 補助項目: 感染症評価スコアの上昇\n(架空)" ],
+                        "supporting" : [ "下記の項目を総合して判定する。架空疾患のため数値は参考値である。\n- 必須項目: 発熱炎症を示す中核所見\n- 補助項目: 免疫応答関連指標の軽度異常\n(架空)", "炎症反応検査 による所見と発熱炎症所見 の組み合わせで判定する。除外診断として感染症に類似する別疾患を除外することが必要。 (架空)" ],
+                        "notes" : "本基準は架空値であり、実臨床の診断には使用しない。**発熱炎症を示す中核所見** を満たし、かつ2 項目以上を充足する場合に確定診断とする。 (架空)"
                       },
                       "required_exams" : [ {
                         "name" : "血液生化学検査",
                         "category" : "blood_test",
-                        "typical_finding" : "典型所見 1 (架空)",
-                        "reference_range" : "基準値 1 (架空)"
+                        "typical_finding" : "クオヘイルドエン (架空)",
+                        "reference_range" : "オグンレイ (架空)"
                       }, {
                         "name" : "問診票",
                         "category" : "pathology",
-                        "typical_finding" : "典型所見 2 (架空)",
-                        "reference_range" : "基準値 2 (架空)"
+                        "typical_finding" : "ヒロト (架空)",
+                        "reference_range" : "スイネイ (架空)"
                       }, {
                         "name" : "CT検査",
                         "category" : "imaging",
-                        "typical_finding" : "典型所見 3 (架空)",
-                        "reference_range" : "基準値 3 (架空)"
+                        "typical_finding" : "マクオ (架空)",
+                        "reference_range" : "クンレカ (架空)"
                       } ],
                       "severity_grading" : null,
-                      "differential_diagnoses" : [ "リイタン", "アームクス" ],
+                      "differential_diagnoses" : [ "リイタン", "アームクス", "スアットオ" ],
                       "complications" : [ "タンクエイ", "イルロギ" ],
                       "treatments" : {
                         "pharmacological" : [ {
-                          "drug_category" : "架空薬効群 1",
+                          "drug_category" : "トゥルククウルレ",
                           "drug_ids" : [ ],
-                          "indication" : "標準治療は外科的治療を中心とし、症状に応じて理学療法を併用する。治療開始から16 週間 後に効果判定を行う。 (架空)",
-                          "notes" : "急性期には輸液・電解質補正を実施し、安定期へ移行後は長期抗菌療法による維持療法を継続する。 (架空)"
-                        }, {
-                          "drug_category" : "架空薬効群 2",
-                          "drug_ids" : [ ],
-                          "indication" : "急性期には抗菌薬投与を実施し、安定期へ移行後は対症療法による維持療法を継続する。 (架空)",
-                          "notes" : "急性期には免疫グロブリン大量療法を実施し、安定期へ移行後は生物学的製剤による維持療法を継続する。 (架空)"
+                          "indication" : "抗微生物薬適正使用 を第一選択とする。効果不十分例では専門治療への切替えを追加し、改善が乏しい場合は感染症科へ紹介する。 (架空)",
+                          "notes" : "標準治療は感染症標準治療を中心とし、症状に応じて合併症予防指導を併用する。治療開始から8 週間 後に効果判定を行う。 (架空)"
                         } ],
                         "non_pharmacological" : [ {
                           "heading" : "食事療法",
-                          "items" : [ "項目 1", "項目 2" ],
-                          "description" : "放射線療法 を第一選択とする。効果不十分例では生物学的製剤を追加し、改善が乏しい場合は地域基幹病院へ紹介する。 (架空)"
+                          "items" : [ "ジオエナ", "ウセ" ],
+                          "description" : "標準治療は感染症管理を中心とし、症状に応じて感染管理指導を併用する。治療開始から2 週間 後に効果判定を行う。 (架空)"
+                        }, {
+                          "heading" : "運動療法",
+                          "items" : [ "イクルエ", "ウセ" ],
+                          "description" : "感染症管理 を第一選択とする。効果不十分例では治療強度の段階的調整を追加し、改善が乏しい場合は地域基幹病院へ紹介する。 (架空)"
                         } ],
                         "acute_phase_protocol" : [ {
                           "order" : 1,
-                          "action" : "支持療法 を第一選択とする。効果不十分例では血漿交換を追加し、改善が乏しい場合は該当専門科へ紹介する。 (架空)",
+                          "action" : "標準治療は感染症標準治療を中心とし、症状に応じて感染管理指導を併用する。治療開始から14 週間 後に効果判定を行う。 (架空)",
                           "target" : "目標値 1 (架空)"
                         } ]
                       },
-                      "prognosis" : "早期発見により予後は良好である。診断 5 年後の機能保持率 は**約 94.0%** と報告される (架空)。",
-                      "prevention" : [ "定期健診の受診" ],
-                      "related_drug_ids" : [ "drug_0020", "drug_0114" ],
-                      "related_disease_ids" : [ "disease_0046", "disease_0048" ],
+                      "prognosis" : "早期発見により予後は良好である。診断 5 年後の感染症再燃率 は**約 87.0%** と報告される (架空)。",
+                      "prevention" : [ "予防接種の検討" ],
+                      "related_drug_ids" : [ "drug_0065", "drug_0063" ],
+                      "related_disease_ids" : [ "disease_0058", "disease_0052" ],
                       "revised_at" : "2026-04-23",
                       "disclaimer" : "FICTIONAL DATA - NOT FOR MEDICAL USE / 架空データ・医療判断には使用不可"
                     }
@@ -1040,7 +1059,14 @@
           },
           "404" : {
             "description" : "指定 id が存在しない",
-            "headers" : { }
+            "headers" : { },
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ProblemDetails"
+                }
+              }
+            }
           }
         },
         "deprecated" : false
@@ -1092,15 +1118,10 @@
           "description" : "ICD-10 章コードの `@SerialName` 値 (例: `chapter_i`)。指定時は `icd10_chapter` が一致するものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "style" : "form",
-          "explode" : true,
+          "explode" : false,
           "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "StringArray"
+            "type" : "string",
+            "title" : "String"
           }
         }, {
           "name" : "department",
@@ -1108,15 +1129,10 @@
           "description" : "診療科の `@SerialName` 値 (例: `internal_medicine`)。指定時は `medical_department` リストに含まれるものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "style" : "form",
-          "explode" : true,
+          "explode" : false,
           "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "StringArray"
+            "type" : "string",
+            "title" : "String"
           }
         }, {
           "name" : "chronicity",
@@ -1124,15 +1140,10 @@
           "description" : "慢性度の `@SerialName` 値 (例: `chronic`)。指定時は `chronicity` が一致するものに絞り込み",
           "required" : false,
           "deprecated" : false,
-          "style" : "form",
-          "explode" : true,
+          "explode" : false,
           "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "StringArray"
+            "type" : "string",
+            "title" : "String"
           }
         }, {
           "name" : "infectious",
@@ -1181,7 +1192,7 @@
         }, {
           "name" : "sort",
           "in" : "query",
-          "description" : "並び替えキー。未指定は `-revised_at` (改訂日降順)、`name_kana` (読み仮名昇順) / `icd10_chapter` (ICD-10 章昇順) を許容。未対応キーは 400 BadRequest。",
+          "description" : "並び替えキー。未指定は `-revised_at` (改訂日降順)、`name_kana` (読み仮名昇順) / `icd10_chapter` (ICD-10 章昇順) を許容。未対応キーは HTTP 422 + problem+json (`errors[].field=sort`)。",
           "required" : false,
           "deprecated" : false,
           "explode" : false,
@@ -1203,34 +1214,24 @@
         }, {
           "name" : "onset_pattern",
           "in" : "query",
-          "description" : "発症パターン (`OnsetPattern` の enum 名、例: `ACUTE`)。複数指定時は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 400 + `ErrorResponse(code=\"INVALID_ONSET_PATTERN\")` を返す。",
+          "description" : "発症パターン (`OnsetPattern` の enum 名、例: `ACUTE`)。複数指定時は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 422 + problem+json (`errors[].field=onset_pattern`) を返す。",
           "required" : false,
           "deprecated" : false,
-          "style" : "form",
-          "explode" : true,
+          "explode" : false,
           "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "StringArray"
+            "type" : "string",
+            "title" : "String"
           }
         }, {
           "name" : "exam_category",
           "in" : "query",
-          "description" : "検査カテゴリ (`ExamCategory` の enum 名、例: `IMAGING`)。複数指定時は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 400 + `ErrorResponse(code=\"INVALID_EXAM_CATEGORY\")` を返す。",
+          "description" : "検査カテゴリ (`ExamCategory` の enum 名、例: `IMAGING`)。複数指定時は OR 結合、他フィルタとは AND 結合。未知の値は HTTP 422 + problem+json (`errors[].field=exam_category`) を返す。",
           "required" : false,
           "deprecated" : false,
-          "style" : "form",
-          "explode" : true,
+          "explode" : false,
           "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "title" : "String"
-            },
-            "title" : "StringArray"
+            "type" : "string",
+            "title" : "String"
           }
         }, {
           "name" : "has_pharmacological_treatment",
@@ -1544,11 +1545,25 @@
           },
           "404" : {
             "description" : "指定 form の画像が存在しない",
-            "headers" : { }
+            "headers" : { },
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ProblemDetails"
+                }
+              }
+            }
           },
-          "400" : {
+          "422" : {
             "description" : "size に S/M/Original 以外を指定",
-            "headers" : { }
+            "headers" : { },
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ProblemDetails"
+                }
+              }
+            }
           }
         },
         "deprecated" : false
@@ -1603,11 +1618,25 @@
           },
           "404" : {
             "description" : "指定 drugId の画像が存在しない",
-            "headers" : { }
+            "headers" : { },
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ProblemDetails"
+                }
+              }
+            }
           },
-          "400" : {
+          "422" : {
             "description" : "size に S/M/Original 以外を指定",
-            "headers" : { }
+            "headers" : { },
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ProblemDetails"
+                }
+              }
+            }
           }
         },
         "deprecated" : false
@@ -1644,6 +1673,56 @@
         },
         "required" : [ "delay_ms", "headers", "state", "status_code" ],
         "title" : "ScenarioOverride"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.FieldViolation" : {
+        "type" : "object",
+        "properties" : {
+          "field" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "reason" : {
+            "type" : "string",
+            "title" : "String"
+          }
+        },
+        "required" : [ "field", "reason" ],
+        "title" : "FieldViolation"
+      },
+      "io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.ProblemDetails" : {
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "title" : {
+            "type" : "string",
+            "title" : "String"
+          },
+          "status" : {
+            "type" : "integer",
+            "format" : "int32",
+            "title" : "Int"
+          },
+          "detail" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          },
+          "instance" : {
+            "type" : [ "null", "string" ],
+            "title" : "String"
+          },
+          "errors" : {
+            "type" : [ "null", "array" ],
+            "items" : {
+              "$ref" : "#/components/schemas/io.github.corvus400.fictionaldrugdiseaserefmockserver.model.common.FieldViolation"
+            },
+            "title" : "ArrayList<FieldViolation>"
+          }
+        },
+        "required" : [ "detail", "errors", "instance", "status", "title", "type" ],
+        "title" : "ProblemDetails"
       },
       "io.github.corvus400.fictionaldrugdiseaserefmockserver.routes.TransitionChainRequest" : {
         "type" : "object",
